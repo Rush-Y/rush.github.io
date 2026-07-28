@@ -4,50 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PFS POC v2.0 - Master Port Operations Suite</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Noto Sans & Noto Sans KR Fonts -->
+    
+    <!-- Google Fonts: Noto Sans & Noto Sans KR -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <script>
-        const ds = {
-            primary:   {50:'#FCE4EC',100:'#F8BBD0',200:'#F48FB1',300:'#F06292',400:'#EC407A',500:'#D81B60',600:'#C2185B',700:'#AD1457',800:'#880E4F',900:'#560A31',1000:'#30031B'},
-            secondary: {50:'#E0F2F1',100:'#B2DFDB',200:'#80CBC4',300:'#4DB6AC',400:'#26A69A',500:'#004F71',600:'#004D40',700:'#003E33',800:'#002D24',900:'#001B15',1000:'#000F0C'},
-            neutral:   {50:'#FAFAFA',100:'#F5F5F5',200:'#EEEEEE',300:'#E0E0E0',400:'#BDBDBD',500:'#9E9E9E',600:'#757575',700:'#616161',800:'#424242',900:'#212121',1000:'#111111'},
-            blue:      {100:'#E3F2FD',200:'#BBDEFB',300:'#90CAF9',400:'#64B5F6',500:'#2196F3',600:'#1E88E5',700:'#1976D2',800:'#1565C0',900:'#0D47A1',1000:'#082A6B'},
-            green:     {100:'#E8F5E9',200:'#C8E6C9',300:'#A5D6A7',400:'#81C784',500:'#4CAF50',600:'#43A047',700:'#388E3C',800:'#2E7D32',900:'#1B5E20',1000:'#0E3511'},
-            yellow:    {100:'#FFFDE7',200:'#FFF9C4',300:'#FFF59D',400:'#FFF176',500:'#FFEB3B',600:'#FDD835',700:'#FBC02D',800:'#F57F17',900:'#A85300',1000:'#6B3100'},
-            orange:    {100:'#FDF2E9',200:'#FBE5D3',300:'#F7C6A1',400:'#F4A76E',500:'#FF9800',600:'#FB8C00',700:'#F57C00',800:'#E65100',900:'#9E3000',1000:'#591200'},
-            red:       {100:'#FFEBEE',200:'#FFCDD2',300:'#EF9A9A',400:'#E57373',500:'#F44336',600:'#E53935',700:'#D32F2F',800:'#C62828',900:'#B71C1C',1000:'#720C0C'},
-            purple:    {100:'#F3E5F5',200:'#E1BEE7',300:'#CE93D8',400:'#BA68C8',500:'#9C27B0',600:'#8E24AA',700:'#7B1FA2',800:'#4A148C',900:'#320463',1000:'#1E003D'}
-        };
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=Noto+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+    <!-- 1. Tailwind CDN Script -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 2. Tailwind Configuration -->
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Noto Sans', 'Noto Sans KR', 'sans-serif']
+                        sans: ['Noto Sans', 'Noto Sans KR', '-apple-system', 'sans-serif']
                     },
                     colors: {
-                        primary: ds.primary,
-                        secondary: ds.secondary,
-                        neutral: ds.neutral,
-                        blue: ds.blue,
-                        green: ds.green,
-                        yellow: ds.yellow,
-                        orange: ds.orange,
-                        red: ds.red,
-                        purple: ds.purple,
-                        
-                        brand: ds.primary[500],
-                        slate: ds.neutral,
-                        gray: ds.neutral,
-                        emerald: ds.green,
-                        rose: ds.red,
-                        amber: ds.yellow,
-                        sky: ds.blue
+                        primary: {
+                            50: '#FCE4EC', 100: '#F8BBD0', 200: '#F48FB1', 300: '#F06292',
+                            400: '#EC407A', 500: '#D81B60', 600: '#C2185B', 700: '#AD1457',
+                            800: '#880E4F', 900: '#560A31'
+                        },
+                        secondary: {
+                            50: '#E0F2F1', 100: '#B2DFDB', 200: '#80CBC4', 300: '#4DB6AC',
+                            400: '#26A69A', 500: '#004F71', 600: '#004D40', 700: '#003E33',
+                            800: '#002D24', 900: '#001B15'
+                        },
+                        neutral: {
+                            50: '#FAFAFA', 100: '#F5F5F5', 200: '#EEEEEE', 300: '#E0E0E0',
+                            400: '#BDBDBD', 500: '#9E9E9E', 600: '#757575', 700: '#616161',
+                            800: '#424242', 900: '#212121'
+                        }
                     },
                     boxShadow: {
                         'elevation-1-2': '0 2px 4px rgba(33,33,33,0.08), 0 1px 2px rgba(33,33,33,0.05)',
@@ -57,12 +46,13 @@
                     }
                 }
             }
-        }
+        };
     </script>
 
     <style>
         * {
-            font-family: 'Noto Sans', 'Noto Sans KR', -apple-system, sans-serif !important;
+            font-family: 'Noto Sans', 'Noto Sans KR', -apple-system, sans-serif;
+            box-sizing: border-box;
         }
 
         :root {
@@ -113,17 +103,41 @@
             transition: all 0.2s ease;
         }
 
+        /* Tooltip Underline CSS Fix */
         .maritime-tooltip {
-            display: inline;
+            display: inline-block;
             cursor: help;
             border-bottom: 1.5px dashed var(--color-primary-500);
-            padding-bottom: 1px;
+            padding-bottom: 0px;
+            line-height: 1.2;
             transition: all 0.15s ease;
+            text-decoration: none;
         }
         .maritime-tooltip:hover {
             color: var(--color-primary-500) !important;
             background-color: rgba(216, 27, 96, 0.08);
             border-radius: 2px;
+        }
+
+        /* Capacity Progress Bar CSS Explicit Styling */
+        .capacity-bar-track {
+            width: 130px !important;
+            height: 12px !important;
+            min-height: 12px !important;
+            background-color: #E0E0E0 !important;
+            border: 1px solid #BDBDBD !important;
+            border-radius: 9999px !important;
+            overflow: hidden !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+            position: relative !important;
+        }
+        .capacity-bar-fill {
+            height: 100% !important;
+            background-color: #D81B60 !important;
+            border-radius: 9999px !important;
+            transition: width 0.3s ease !important;
+            display: block !important;
         }
 
         .drag-handle-left, .drag-handle-right {
@@ -137,7 +151,7 @@
         }
         .drag-handle-left { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
         .drag-handle-right { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
-        .drag-handle-left:hover, .drag-handle-right:hover { background: rgba(0, 0, 0, 0.08); }
+        .drag-handle-left:hover, .drag-handle-right:hover { background: rgba(0, 0, 0, 0.12); }
 
         .ds-grid th {
             background-color: var(--color-neutral-100);
@@ -166,6 +180,7 @@
         .interactive-port-card {
             cursor: pointer;
             transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 190px;
         }
         
         .port-card-safe {
@@ -214,7 +229,7 @@
 
         @keyframes floatBob {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
+            50% { transform: translateY(-3px); }
         }
         .animate-float-bob {
             animation: floatBob 2.4s ease-in-out infinite !important;
@@ -233,14 +248,15 @@
 </head>
 <body class="min-h-screen flex flex-col overflow-x-hidden antialiased text-sm bg-neutral-50 text-neutral-900">
 
-    <header class="bg-white border-b border-neutral-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+    <!-- MAIN HEADER -->
+    <header class="bg-white border-b border-neutral-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm min-h-[56px]">
         <div class="flex items-center space-x-3">
-            <button id="header-back-btn" onclick="showScheduleView()" disabled class="ds-btn ds-btn-outline !py-1 !px-2.5 text-sm font-extrabold rounded-md border-neutral-300 bg-neutral-100 text-neutral-500 opacity-80 cursor-not-allowed transition-all" title="Proforma Schedule로 돌아가기">
+            <button id="header-back-btn" onclick="showScheduleView()" disabled class="ds-btn border border-neutral-300 bg-neutral-100 text-neutral-500 opacity-80 cursor-not-allowed transition-all !py-1 !px-2.5 text-sm font-extrabold rounded-md" title="Proforma Schedule로 돌아가기">
                 ←
             </button>
-            <span class="bg-primary-500 text-white font-extrabold px-3 py-1.5 rounded-md tracking-wider text-xs shadow-sm">PFS POC v2.0</span>
+            <span class="bg-primary-500 text-white font-extrabold px-3 py-1.5 rounded-md tracking-wider text-xs shadow-sm inline-block">PFS POC v2.0</span>
             <span class="text-neutral-300">|</span>
-            <span class="font-bold text-neutral-800 text-base" id="main-brand-title">Proforma Schedule Overview</span>
+            <h1 class="font-bold text-neutral-800 text-base m-0 p-0 inline-block" id="main-brand-title">Proforma Schedule Overview</h1>
         </div>
 
         <div class="flex items-center space-x-3">
@@ -253,6 +269,7 @@
 
     <main class="flex-1 p-6 max-w-[1680px] mx-auto w-full space-y-4">
 
+        <!-- FILTER BAR SECTION -->
         <section class="bg-white rounded-xl border border-neutral-200 p-4 shadow-2xs">
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <div class="flex flex-wrap items-center gap-3">
@@ -314,6 +331,7 @@
             </div>
         </section>
 
+        <!-- TERMINAL CAPACITY CONSTRAINT BAR (Graph Included) -->
         <div id="terminal-constraint-bar" class="bg-secondary-50/70 border border-secondary-200 rounded-xl px-5 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs text-secondary-900 font-medium shadow-2xs transition-all duration-200">
             <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
                 <span class="font-extrabold text-secondary-800 flex items-center gap-1.5 shrink-0">
@@ -332,25 +350,27 @@
                 <span><span class="maritime-tooltip" data-tooltip="[주간 최대 처리 한도] 해당 터미널에서 일주일(168시간) 동안 최대로 처리 가능한 화물 한도 수량">Max Vol.</span>: <strong id="constraint-max-vol" class="font-bold font-mono text-secondary-900">15,000 Moves</strong></span>
                 <span class="text-secondary-300/80 font-bold">|</span>
                 
+                <!-- CONTAINER CARGO CAPACITY GRAPH BAR -->
                 <div class="flex items-center gap-2" id="constraint-progress-wrapper">
                     <span class="maritime-tooltip" data-tooltip="[주간 잔여 가용 물량] 주간 수용 한도 중 현재 누적 처리량을 제하고 이번 주에 추가로 선적/하역할 수 있는 여유 한도 수량입니다.">Remaining</span>:
                     <strong id="constraint-remaining-text" class="font-black font-mono text-primary-600 text-xs">
                         9,800 / 15,000 Moves <span class="text-primary-700 font-extrabold maritime-tooltip" data-tooltip="[추가 처리 가능 잔여량] 5,200 Moves 수량만큼 이번 주 스케줄에 추가 배정 가능한 물동량입니다.">(5,200 Left)</span>
                     </strong>
-                    <div class="w-32 bg-neutral-300 border border-neutral-400 h-2.5 rounded-full overflow-hidden inline-block shadow-inner ml-1">
-                        <div id="constraint-progress-bar" class="bg-primary-600 h-full transition-all duration-300" style="width: 65.3%;"></div>
+                    <div class="capacity-bar-track ml-1">
+                        <div id="constraint-progress-bar" class="capacity-bar-fill" style="width: 65.3%;"></div>
                     </div>
                 </div>
             </div>
             <span id="constraint-footer-note" class="text-[11px] text-secondary-600 font-semibold shrink-0">* Weekly handling capacity metric displayed upon selecting a specific terminal.</span>
         </div>
 
+        <!-- SCREEN 1: SCHEDULE OVERVIEW -->
         <section id="screen-schedule" class="tab-content block space-y-4">
 
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h3 class="font-extrabold text-neutral-900 text-base tracking-tight flex items-center gap-2">
+                <h2 class="font-extrabold text-neutral-900 text-base tracking-tight flex items-center gap-2">
                     <span class="maritime-tooltip" data-tooltip="[프로포마 기항 체인 스케줄] 선박이 표준적으로 운항하도록 기획된 노선별 정기 입출항 순서 및 체류 시간 목록입니다.">Proforma Calling Ports Chain</span>
-                </h3>
+                </h2>
 
                 <div class="flex items-center gap-2.5 bg-white px-3.5 py-1.5 rounded-lg border border-neutral-200 text-xs select-none shadow-2xs">
                     <span class="text-neutral-500 font-bold text-[11px] uppercase tracking-wide border-r border-neutral-200 pr-2">STATUS</span>
@@ -386,25 +406,25 @@
             <!-- Master Grid Table (4 Lanes: EC1, EC2, FP2, PN1) -->
             <div class="bg-white rounded-2xl border border-neutral-200 shadow-elevation-1-2 overflow-hidden">
                 <div class="overflow-x-auto custom-scrollbar">
-                    <table class="ds-grid w-full text-left border-collapse">
+                    <table class="ds-grid w-full text-left border-collapse min-w-[1100px]">
                         <thead>
                             <tr class="bg-neutral-100 text-neutral-600 uppercase text-[11px] tracking-wider font-extrabold border-b border-neutral-200">
-                                <th class="py-4 px-4 w-[5%] border-r border-neutral-200 text-left">
+                                <th class="py-4 px-4 w-[60px] border-r border-neutral-200 text-left">
                                     <span class="maritime-tooltip" data-tooltip="[대항로 권역] 아시아-미주, 유럽 등 정기선 선박이 운항하는 거대 해역 구분입니다.">Trade</span>
                                 </th>
-                                <th class="py-4 px-4 w-[6%] border-r border-neutral-200 text-left">
+                                <th class="py-4 px-4 w-[70px] border-r border-neutral-200 text-left">
                                     <span class="maritime-tooltip" data-tooltip="[서비스 노선] 정해진 기항 항구들을 매주 일정한 간격으로 순회하는 개별 정기선 항로 명칭입니다.">Lane</span>
                                 </th>
-                                <th class="py-4 px-4 w-[6%] border-r border-neutral-200 text-left">
+                                <th class="py-4 px-4 w-[80px] border-r border-neutral-200 text-left">
                                     <span class="maritime-tooltip" data-tooltip="[선적 용량] 20피트 컨테이너 단위 표준 최대 적재 용량입니다.">TEU</span>
                                 </th>
-                                <th class="py-4 px-4 w-[6%] border-r border-neutral-200 text-left">
+                                <th class="py-4 px-4 w-[85px] border-r border-neutral-200 text-left">
                                     <span class="maritime-tooltip" data-tooltip="[배 가동 척수] 해당 항로 서비스를 매주 유지하기 위해 투입된 총 가동 선박 수량입니다.">Vessel Qty</span>
                                 </th>
-                                <th class="py-4 px-4 w-[6%] border-r border-neutral-200 text-left">
+                                <th class="py-4 px-4 w-[85px] border-r border-neutral-200 text-left">
                                     <span class="maritime-tooltip" data-tooltip="[총 기항지 수] 선박이 1회 전체 순환 노선에서 기항하는 정기 항구 및 터미널 수입니다.">Port Count</span>
                                 </th>
-                                <th class="py-4 px-5 w-[71%] text-left">
+                                <th class="py-4 px-5 text-left">
                                     <span class="maritime-tooltip" data-tooltip="[기항지 순환 체인] 선박의 정박/출항 시각 및 체류 시간 순서 구조입니다.">Calling Ports & Terminal Chain Sequence</span>
                                 </th>
                             </tr>
@@ -419,12 +439,12 @@
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">13</td>
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">12</td>
                                 <td class="py-6 px-5">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                    <div class="flex flex-wrap items-center gap-3">
                                         <div data-1depth-term="TWKH16" onclick="navigateToGantt('TWKH16', 1, 'EC1')" class="interactive-port-card port-card port-card-clash rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>1. TWKHH (TWKH16:E)</span>
-                                                    <span class="status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Clash</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">1. TWKHH (TWKH16:E)</span>
+                                                    <span class="status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Clash</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> SAT 18:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> SUN 12:00
@@ -438,9 +458,9 @@
 
                                         <div data-1depth-term="CNYT01" onclick="navigateToGantt('CNYT01', 2, 'EC1')" class="interactive-port-card port-card port-card-review rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>2. CNYTN (CNYT01:E)</span>
-                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Review</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">2. CNYTN (CNYT01:E)</span>
+                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Review</span>
                                                 </div>
                                                 <div class="text-[10px] text-amber-950 font-medium mt-1">
                                                     <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> MON 16:00 - <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> TUE 13:00
@@ -454,9 +474,9 @@
 
                                         <div data-1depth-term="KRPUSHN" onclick="navigateToGantt('KRPUSHN', 4, 'EC1')" class="interactive-port-card port-card port-card-confirmed rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>3. KRPUS (KRPUSHN:E)</span>
-                                                    <span class="status-badge bg-blue-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Done</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">3. KRPUS (KRPUSHN:E)</span>
+                                                    <span class="status-badge bg-blue-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Done</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> WED 20:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> FRI 02:00
@@ -470,9 +490,9 @@
 
                                         <div data-1depth-term="PAPCA10" onclick="navigateToGantt('PAPCA10', 5, 'EC1')" class="interactive-port-card port-card port-card-review rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>4. PAPCA (PAPCA10:E)</span>
-                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Review</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">4. PAPCA (PAPCA10:E)</span>
+                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Review</span>
                                                 </div>
                                                 <div class="text-[10px] text-amber-950 font-medium mt-1">
                                                     <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> WED <span class="text-purple-800 font-black bg-purple-100 px-1 py-0.5 rounded border border-purple-300 shadow-2xs" title="Fixed Time (시각 고정)">22:00</span> - <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> THU <span class="text-purple-800 font-black bg-purple-100 px-1 py-0.5 rounded border border-purple-300 shadow-2xs" title="Fixed Time (시각 고정)">14:00</span>
@@ -486,9 +506,9 @@
 
                                         <div data-1depth-term="USNYC01" onclick="navigateToGantt('USNYC01', 6, 'EC1')" class="interactive-port-card port-card port-card-safe rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>5. USNYC (USNYC01:E)</span>
-                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Safe</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">5. USNYC (USNYC01:E)</span>
+                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Safe</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> SUN 02:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> MON 10:00
@@ -502,9 +522,9 @@
 
                                         <div data-1depth-term="TWKH16" onclick="navigateToGantt('TWKH16', 1, 'EC1')" class="interactive-port-card port-card port-card-clash rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>6. TWKHH (TWKH16:W)</span>
-                                                    <span class="status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Clash</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">6. TWKHH (TWKH16:W)</span>
+                                                    <span class="status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Clash</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> SAT 18:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> SUN 12:00
@@ -527,12 +547,12 @@
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">13</td>
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">10</td>
                                 <td class="py-6 px-5">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                    <div class="flex flex-wrap items-center gap-3">
                                         <div data-1depth-term="SGSIN04" onclick="navigateToGantt('SGSIN04', 2, 'EC2')" class="interactive-port-card port-card port-card-safe rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>1. SGSIN (SGSIN04:E)</span>
-                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Safe</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">1. SGSIN (SGSIN04:E)</span>
+                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Safe</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> SUN 03:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> MON 09:00
@@ -546,9 +566,9 @@
 
                                         <div data-1depth-term="CNYT01" onclick="navigateToGantt('CNYT01', 2, 'EC2')" class="interactive-port-card port-card port-card-review rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>2. CNYTN (CNYT01:E)</span>
-                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Review</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">2. CNYTN (CNYT01:E)</span>
+                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Review</span>
                                                 </div>
                                                 <div class="text-[10px] text-amber-950 font-medium mt-1">
                                                     <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> MON 05:30 - <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> TUE 02:30
@@ -562,9 +582,9 @@
 
                                         <div data-1depth-term="CNSH01" onclick="navigateToGantt('CNSH01', 2, 'EC2')" class="interactive-port-card port-card port-card-review rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>3. CNSHA (CNSH01:E)</span>
-                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Review</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">3. CNSHA (CNSH01:E)</span>
+                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Review</span>
                                                 </div>
                                                 <div class="text-[10px] text-amber-950 font-medium mt-1">
                                                     <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> THU 13:30 - <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> FRI 19:30
@@ -578,9 +598,9 @@
 
                                         <div data-1depth-term="KRPUSHN" onclick="navigateToGantt('KRPUSHN', 2, 'EC2')" class="interactive-port-card port-card port-card-safe rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>4. KRPUS (KRPUSHN:E)</span>
-                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Safe</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">4. KRPUS (KRPUSHN:E)</span>
+                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Safe</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> MON 11:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> TUE 12:00
@@ -594,9 +614,9 @@
 
                                         <div data-1depth-term="PAPCA10" onclick="navigateToGantt('PAPCA10', 2, 'EC2')" class="interactive-port-card port-card port-card-review rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>5. PAPCA (PAPCA10:E)</span>
-                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Review</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">5. PAPCA (PAPCA10:E)</span>
+                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Review</span>
                                                 </div>
                                                 <div class="text-[10px] text-amber-950 font-medium mt-1">
                                                     <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> MON <span class="text-purple-800 font-black bg-purple-100 px-1 py-0.5 rounded border border-purple-300 shadow-2xs" title="Fixed Time">22:00</span> - <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> TUE <span class="text-purple-800 font-black bg-purple-100 px-1 py-0.5 rounded border border-purple-300 shadow-2xs" title="Fixed Time">14:00</span>
@@ -619,12 +639,12 @@
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">14</td>
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">14</td>
                                 <td class="py-6 px-5">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                    <div class="flex flex-wrap items-center gap-3">
                                         <div data-1depth-term="CNYT01" onclick="navigateToGantt('CNYT01', 3, 'FP2')" class="interactive-port-card port-card port-card-review rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>1. CNYTN (CNYT01:E)</span>
-                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Review</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">1. CNYTN (CNYT01:E)</span>
+                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Review</span>
                                                 </div>
                                                 <div class="text-[10px] text-amber-950 font-medium mt-1">
                                                     <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> TUE 08:00 - <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> WED 18:00
@@ -638,9 +658,9 @@
 
                                         <div data-1depth-term="KRPUSHN" onclick="navigateToGantt('KRPUSHN', 3, 'FP2')" class="interactive-port-card port-card port-card-safe rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>2. KRPUS (KRPUSHN:E)</span>
-                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Safe</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">2. KRPUS (KRPUSHN:E)</span>
+                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Safe</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> THU 10:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> FRI 16:00
@@ -663,12 +683,12 @@
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">12</td>
                                 <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">11</td>
                                 <td class="py-6 px-5">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                    <div class="flex flex-wrap items-center gap-3">
                                         <div onclick="navigateToGantt('KRPUSHN', 1, 'PN1')" class="interactive-port-card port-card port-card-safe rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>1. KRPUS (KRPUSHN:E)</span>
-                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Safe</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">1. KRPUS (KRPUSHN:E)</span>
+                                                    <span class="status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Safe</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> MON 08:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> TUE 14:00
@@ -682,9 +702,9 @@
 
                                         <div onclick="navigateToGantt('USNYC01', 1, 'PN1')" class="interactive-port-card port-card port-card-review rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>2. USNYC (USNYC01:E)</span>
-                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Review</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">2. USNYC (USNYC01:E)</span>
+                                                    <span class="status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Review</span>
                                                 </div>
                                                 <div class="text-[10px] text-amber-950 font-medium mt-1">
                                                     <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> WED 18:00 - <strong class="font-extrabold text-amber-950 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> THU 22:00
@@ -698,9 +718,9 @@
 
                                         <div onclick="navigateToGantt('TWKH16', 1, 'PN1')" class="interactive-port-card port-card port-card-clash rounded-xl p-3 text-xs flex flex-col justify-between h-[115px] shadow-2xs">
                                             <div>
-                                                <div class="flex justify-between items-center font-bold">
-                                                    <span>3. TWKHH (TWKH16:E)</span>
-                                                    <span class="status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase">Clash</span>
+                                                <div class="flex justify-between items-center font-bold gap-2">
+                                                    <span class="truncate">3. TWKHH (TWKH16:E)</span>
+                                                    <span class="status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">Clash</span>
                                                 </div>
                                                 <div class="text-[10px] text-neutral-600 font-medium mt-1">
                                                     <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> SUN 10:00 - <strong class="font-extrabold text-neutral-800 maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> MON 16:00
@@ -721,6 +741,7 @@
 
         </section>
 
+        <!-- SCREEN 2: GANTT TIMELINE SCREEN -->
         <section id="screen-gantt" class="tab-content hidden space-y-3 pt-1">
 
             <div class="flex flex-wrap items-center justify-between gap-3 mb-1">
@@ -760,7 +781,7 @@
                 </div>
             </div>
 
-            <!-- 지표 및 로테이션 노드 패널 -->
+            <!-- Rotation Metrics Panel -->
             <div class="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm space-y-3.5">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
                     <div class="flex flex-wrap items-center gap-3 text-xs font-bold text-neutral-800">
@@ -780,119 +801,121 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-start gap-x-2.5 gap-y-3 text-xs font-semibold py-1" id="port-rotation-list">
-                    <!-- JS renderLaneRotationUI() 동적 생성 -->
+                <div class="flex flex-wrap items-center justify-start gap-x-2.5 gap-y-3 text-xs font-semibold py-1 overflow-x-auto custom-scrollbar" id="port-rotation-list">
+                    <!-- Dynamic rendering by renderLaneRotationUI() -->
                 </div>
             </div>
 
             <!-- Gantt Chart Timeline Board -->
             <div class="bg-white rounded-2xl border border-neutral-200 shadow-elevation-1-2 overflow-hidden flex flex-col relative" id="gantt-board-wrapper">
-                <div class="w-full p-4 relative">
-                    
-                    <!-- Header days row -->
-                    <div class="grid grid-cols-30 bg-neutral-50 text-center text-xs font-bold text-neutral-600 border-b border-neutral-200">
-                        <div class="col-span-1 border-r border-neutral-200 py-3 bg-neutral-100 flex items-center justify-center font-bold">Trade</div>
-                        <div class="col-span-1 border-r border-neutral-200 py-3 bg-neutral-100 flex items-center justify-center font-bold">Lane</div>
+                <div class="w-full p-4 relative overflow-x-auto custom-scrollbar">
+                    <div class="min-w-[980px]">
                         
-                        <div class="col-span-4 border-r border-neutral-200 py-2">
-                            <div class="text-primary-500">SUN</div>
-                            <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
-                        </div>
-                        <div class="col-span-4 border-r border-neutral-200 py-2 stripe-pattern">
-                            <div class="text-neutral-700">MON</div>
-                            <div class="grid grid-cols-4 text-[9px] text-neutral-500 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
-                        </div>
-                        <div class="col-span-4 border-r border-neutral-200 py-2">
-                            <div>TUE</div>
-                            <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
-                        </div>
-                        <div class="col-span-4 border-r border-neutral-200 py-2">
-                            <div>WED</div>
-                            <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
-                        </div>
-                        <div class="col-span-4 border-r border-neutral-200 py-2">
-                            <div>THU</div>
-                            <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
-                        </div>
-                        <div class="col-span-4 border-r border-neutral-200 py-2 stripe-pattern">
-                            <div class="text-neutral-700">FRI</div>
-                            <div class="grid grid-cols-4 text-[9px] text-neutral-500 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
-                        </div>
-                        <div class="col-span-4 py-2">
-                            <div class="text-blue-600 font-black">SAT</div>
-                            <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
-                        </div>
-                    </div>
-
-                    <!-- Gantt Rows Container -->
-                    <div class="divide-y divide-neutral-150 relative bg-white" id="gantt-board">
-                        
-                        <div class="absolute inset-0 grid grid-cols-30 pointer-events-none z-0">
-                            <div class="col-span-1 border-r border-neutral-100 h-full"></div>
-                            <div class="col-span-1 border-r border-neutral-200 h-full"></div>
-                            <div class="col-span-4 border-r border-neutral-200 h-full"></div>
-                            <div class="col-span-4 border-r border-neutral-200 h-full stripe-pattern"></div>
-                            <div class="col-span-4 border-r border-neutral-200 h-full"></div>
-                            <div class="col-span-4 border-r border-neutral-200 h-full"></div>
-                            <div class="col-span-4 border-r border-neutral-200 h-full"></div>
-                            <div class="col-span-4 border-r border-neutral-200 h-full stripe-pattern"></div>
-                            <div class="col-span-4 h-full"></div>
-                        </div>
-
-                        <!-- Row 1 (EC1) -->
-                        <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
-                            <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
-                            <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-primary-600 bg-neutral-100 font-black" id="gantt-row-1-lane">EC1</div>
-                            <div onclick="handleRowEmptyClick(event, 1, 'EC', 'EC1')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-1-vessels" title="빈 영역 클릭 시 12시간 가상 막대가 생성됩니다">
-                                <div class="absolute left-[15%] w-[12%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
-                                    <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
-                                        Maintenance
-                                    </span>
-                                </div>
-                                <div class="absolute left-[72%] w-[13%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
-                                    <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
-                                        Reserved
-                                    </span>
-                                </div>
+                        <!-- Days Header -->
+                        <div class="grid grid-cols-30 bg-neutral-50 text-center text-xs font-bold text-neutral-600 border-b border-neutral-200">
+                            <div class="col-span-1 border-r border-neutral-200 py-3 bg-neutral-100 flex items-center justify-center font-bold">Trade</div>
+                            <div class="col-span-1 border-r border-neutral-200 py-3 bg-neutral-100 flex items-center justify-center font-bold">Lane</div>
+                            
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div class="text-primary-500">SUN</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2 stripe-pattern">
+                                <div class="text-neutral-700">MON</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-500 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>TUE</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>WED</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>THU</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2 stripe-pattern">
+                                <div class="text-neutral-700">FRI</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-500 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
+                            </div>
+                            <div class="col-span-4 py-2">
+                                <div class="text-blue-600 font-black">SAT</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5"><span>06</span><span>12</span><span>18</span><span>24</span></div>
                             </div>
                         </div>
 
-                        <!-- Row 2 (EC2) -->
-                        <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
-                            <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
-                            <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-600 bg-neutral-100" id="gantt-row-2-lane">EC2</div>
-                            <div onclick="handleRowEmptyClick(event, 2, 'EC', 'EC2')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-2-vessels" title="빈 영역 클릭 시 12시간 가상 막대가 생성됩니다">
-                                <div class="absolute left-[15%] w-[12%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
-                                    <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
-                                        Maintenance
-                                    </span>
-                                </div>
-                                <div class="absolute left-[72%] w-[13%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
-                                    <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
-                                        Reserved
-                                    </span>
+                        <!-- Gantt Rows Container -->
+                        <div class="divide-y divide-neutral-200 relative bg-white min-h-[312px]" id="gantt-board">
+                            
+                            <div class="absolute inset-0 grid grid-cols-30 pointer-events-none z-0">
+                                <div class="col-span-1 border-r border-neutral-100 h-full"></div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full stripe-pattern"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full stripe-pattern"></div>
+                                <div class="col-span-4 h-full"></div>
+                            </div>
+
+                            <!-- Row 1 (EC1) -->
+                            <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-primary-600 bg-neutral-100 font-black" id="gantt-row-1-lane">EC1</div>
+                                <div onclick="handleRowEmptyClick(event, 1, 'EC', 'EC1')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-1-vessels" title="빈 영역 클릭 시 12시간 가상 막대가 생성됩니다">
+                                    <div class="absolute left-[15%] w-[12%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
+                                        <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
+                                            Maintenance
+                                        </span>
+                                    </div>
+                                    <div class="absolute left-[72%] w-[13%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
+                                        <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
+                                            Reserved
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Row 3 (ECT) -->
-                        <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
-                            <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
-                            <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-600 bg-neutral-100" id="gantt-row-3-lane">ECT</div>
-                            <div onclick="handleRowEmptyClick(event, 3, 'EC', 'ECT')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-3-vessels" title="빈 영역 클릭 시 12시간 가상 막대가 생성됩니다">
-                                <div class="absolute left-[15%] w-[12%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
-                                    <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
-                                        Maintenance
-                                    </span>
-                                </div>
-                                <div class="absolute left-[72%] w-[13%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
-                                    <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
-                                        Reserved
-                                    </span>
+                            <!-- Row 2 (EC2) -->
+                            <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-600 bg-neutral-100" id="gantt-row-2-lane">EC2</div>
+                                <div onclick="handleRowEmptyClick(event, 2, 'EC', 'EC2')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-2-vessels" title="빈 영역 클릭 시 12시간 가상 막대가 생성됩니다">
+                                    <div class="absolute left-[15%] w-[12%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
+                                        <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
+                                            Maintenance
+                                        </span>
+                                    </div>
+                                    <div class="absolute left-[72%] w-[13%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
+                                        <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
+                                            Reserved
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
+                            <!-- Row 3 (ECT) -->
+                            <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-600 bg-neutral-100" id="gantt-row-3-lane">ECT</div>
+                                <div onclick="handleRowEmptyClick(event, 3, 'EC', 'ECT')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-3-vessels" title="빈 영역 클릭 시 12시간 가상 막대가 생성됩니다">
+                                    <div class="absolute left-[15%] w-[12%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
+                                        <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
+                                            Maintenance
+                                        </span>
+                                    </div>
+                                    <div class="absolute left-[72%] w-[13%] h-full top-0 flex items-center justify-center z-10 pointer-events-auto">
+                                        <span class="bg-neutral-100 border border-neutral-300 text-neutral-700 px-2.5 py-1 rounded-full font-black text-[10px] uppercase shadow-2xs whitespace-nowrap">
+                                            Reserved
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -929,7 +952,7 @@
         </div>
     </div>
 
-    <!-- SMART BOUNDARY HOVER TOOLTIP -->
+    <!-- SMART HOVER TOOLTIP -->
     <div id="gantt-vessel-tooltip" class="fixed hidden bg-neutral-900/95 backdrop-blur-md text-white p-3.5 rounded-xl shadow-elevation-7-8 text-xs space-y-1.5 border border-neutral-700 min-w-[270px] max-w-[320px] z-[9999] pointer-events-none transition-opacity duration-150 text-left"></div>
 
     <!-- GLOBAL MARITIME GLOSSARY TOOLTIP -->
@@ -1326,7 +1349,7 @@
         }
 
         function renderSingleVesselBar(v, options = {}) {
-            const { isWrapSegment = false, leftOverride = null, widthOverride = null } = options;
+            const { isWrapSegment = false } = options;
 
             const startDT = percentToDayTime(v.left);
             const endDT = percentToDayTime(v.left + v.width);
@@ -1487,25 +1510,25 @@
                 if (status === 'Confirmed' || status === 'Done') {
                     card.classList.add('port-card-confirmed');
                     if (badgeEl) {
-                        badgeEl.className = "status-badge bg-blue-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase";
+                        badgeEl.className = "status-badge bg-blue-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0";
                         badgeEl.textContent = "Done";
                     }
                 } else if (status === 'Clash') {
                     card.classList.add('port-card-clash');
                     if (badgeEl) {
-                        badgeEl.className = "status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase";
+                        badgeEl.className = "status-badge bg-rose-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0";
                         badgeEl.textContent = "Clash";
                     }
                 } else if (status === 'Review') {
                     card.classList.add('port-card-review');
                     if (badgeEl) {
-                        badgeEl.className = "status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase";
+                        badgeEl.className = "status-badge bg-amber-200 border border-amber-400 text-amber-950 px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0";
                         badgeEl.textContent = "Review";
                     }
                 } else {
                     card.classList.add('port-card-safe');
                     if (badgeEl) {
-                        badgeEl.className = "status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase";
+                        badgeEl.className = "status-badge bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0";
                         badgeEl.textContent = "Safe";
                     }
                 }
@@ -1527,7 +1550,7 @@
 
         function startDrag(e, vesselId, type) {
             e.stopPropagation();
-            selectVessel(id = vesselId);
+            selectVessel(vesselId);
             
             activeVessel = vessels.find(v => v.id === vesselId);
             if (!activeVessel) return;
@@ -1708,7 +1731,7 @@
             
             if (backBtn) {
                 backBtn.disabled = true;
-                backBtn.className = "ds-btn ds-btn-outline !py-1 !px-2.5 text-sm font-extrabold rounded-md border-neutral-300 bg-neutral-100 text-neutral-500 opacity-80 cursor-not-allowed transition-all";
+                backBtn.className = "ds-btn border border-neutral-300 bg-neutral-100 text-neutral-500 opacity-80 cursor-not-allowed transition-all !py-1 !px-2.5 text-sm font-extrabold rounded-md";
             }
         }
 
@@ -1724,7 +1747,7 @@
 
             if (backBtn) {
                 backBtn.disabled = false;
-                backBtn.className = "ds-btn ds-btn-outline !py-1 !px-2.5 text-sm font-extrabold hover:bg-neutral-100 rounded-md border-neutral-300 text-neutral-800 opacity-100 cursor-pointer transition-all";
+                backBtn.className = "ds-btn border border-neutral-300 hover:bg-neutral-100 rounded-md text-neutral-800 opacity-100 cursor-pointer transition-all !py-1 !px-2.5 text-sm font-extrabold";
             }
 
             const laneFilter = document.getElementById('filter-lanes');
@@ -1809,8 +1832,8 @@
                         <strong id="constraint-remaining-text" class="font-black font-mono text-primary-600 text-xs">
                             ${data.currentVol.toLocaleString()} / ${data.maxVol.toLocaleString()} Moves <span class="text-primary-700 font-extrabold maritime-tooltip" data-tooltip="[추가 처리 가능 잔여량] 이번 주 스케줄에 추가 배정 가능한 물동량입니다.">(${remaining.toLocaleString()} Left)</span>
                         </strong>
-                        <div class="w-32 bg-neutral-300 border border-neutral-400 h-2.5 rounded-full overflow-hidden inline-block shadow-inner ml-1">
-                            <div id="constraint-progress-bar" class="bg-primary-600 h-full transition-all duration-300" style="width: ${percentage}%;"></div>
+                        <div class="capacity-bar-track ml-1">
+                            <div id="constraint-progress-bar" class="capacity-bar-fill" style="width: ${percentage}%;"></div>
                         </div>
                     `;
                 }
@@ -1962,7 +1985,7 @@
             }, 3000);
         }
 
-        // Window attachments for inline HTML events
+        // Window scope bindings
         window.showScheduleView = showScheduleView;
         window.navigateToGantt = navigateToGantt;
         window.onLaneFilterChange = onLaneFilterChange;
