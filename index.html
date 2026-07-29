@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFS POC v2.0 - Master Port Operations Suite</title>
+
+    <!-- Google Fonts: Noto Sans & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=Noto+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS Config -->
+    <script>
+        tailwind = {
+            config: {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Noto Sans', 'Noto Sans KR', '-apple-system', 'sans-serif']
+                        },
+                        colors: {
+                            primary: {
+                                50: '#FCE4EC', 100: '#F8BBD0', 200: '#F48FB1', 300: '#F06292',
+                                400: '#EC407A', 500: '#D81B60', 600: '#C2185B', 700: '#AD1457',
+                                800: '#880E4F', 900: '#560A31'
+                            },
+                            secondary: {
+                                50: '#E0F2F1', 100: '#B2DFDB', 200: '#80CBC4', 300: '#4DB6AC',
+                                400: '#26A69A', 500: '#004F71', 600: '#004D40', 700: '#003E33',
+                                800: '#002D24', 900: '#001B15'
+                            },
+                            neutral: {
+                                50: '#FAFAFA', 100: '#F5F5F5', 200: '#EEEEEE', 300: '#E0E0E0',
+                                400: '#BDBDBD', 500: '#9E9E9E', 600: '#757575', 700: '#616161',
+                                800: '#424242', 900: '#212121'
+                            }
+                        },
+                        boxShadow: {
+                            'elevation-1-2': '0 2px 4px rgba(33,33,33,0.08), 0 1px 2px rgba(33,33,33,0.05)',
+                            'elevation-3-4': '0 6px 12px rgba(33,33,33,0.12), 0 3px 6px rgba(33,33,33,0.08)',
+                            'elevation-5-6': '0 12px 24px rgba(33,33,33,0.16), 0 6px 12px rgba(33,33,33,0.10)',
+                            'elevation-7-8': '0 24px 38px rgba(33,33,33,0.20), 0 12px 20px rgba(33,33,33,0.15)'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        * {
+            font-family: 'Noto Sans', 'Noto Sans KR', '-apple-system', sans-serif !important;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary-500: #D81B60;
+            --color-primary-600: #C2185B;
+            --color-primary-700: #AD1457;
+            --color-secondary-500: #004F71;
+            --color-secondary-600: #004D40;
+            --color-secondary-700: #003E33;
+        }
+
+        .bg-primary-500 { background-color: #D81B60 !important; }
+        .bg-primary-600 { background-color: #C2185B !important; }
+        .text-primary-500 { color: #D81B60 !important; }
+        .text-primary-600 { color: #C2185B !important; }
+        .text-primary-700 { color: #AD1457 !important; }
+        .border-primary-300 { border-color: #F06292 !important; }
+        .hover\:bg-primary-50:hover { background-color: #FCE4EC !important; }
+
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #F5F5F5; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #BDBDBD; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #757575; }
+
+        .ds-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 6px; font-weight: 600; font-size: 13px; line-height: 20px;
+            padding: 8px 16px; border-radius: 6px; border: 1px solid transparent;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+
+        .maritime-tooltip {
+            display: inline !important; cursor: help !important;
+            border-bottom: 1.5px dashed #D81B60 !important;
+            padding-bottom: 0px !important; transition: color 0.15s ease, border-color 0.15s ease !important;
+            text-decoration: none !important; background-color: transparent !important;
+        }
+        .maritime-tooltip:hover {
+            color: #D81B60 !important; border-bottom-color: #AD1457 !important;
+            background-color: transparent !important;
+        }
+
+        .capacity-bar-track {
+            width: 130px !important; height: 12px !important; min-height: 12px !important;
+            background-color: #E0E0E0 !important; border: 1px solid #BDBDBD !important;
+            border-radius: 9999px !important; overflow: hidden !important;
+            display: inline-block !important; vertical-align: middle !important; position: relative !important;
+        }
+        .capacity-bar-fill {
+            height: 100% !important; background-color: #D81B60 !important;
+            border-radius: 9999px !important; transition: width 0.3s ease !important; display: block !important;
+        }
+
+        .drag-handle-left, .drag-handle-right {
+            position: absolute; top: 0; width: 10px; height: 100%;
+            cursor: ew-resize; z-index: 30; transition: background 0.15s;
+        }
+        .drag-handle-left { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+        .drag-handle-right { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+        .drag-handle-left:hover, .drag-handle-right:hover { background: rgba(0, 0, 0, 0.12); }
+
+        .ds-grid th { background-color: #F5F5F5; color: #616161; font-weight: 600; font-size: 11px; letter-spacing: -0.2px; }
+        .ds-grid tbody tr:hover { background-color: rgba(216, 27, 96, 0.02) !important; }
+
+        .grid-cols-30 {
+            display: grid !important;
+            grid-template-columns: 80px 80px 92px repeat(28, minmax(0, 1fr)) !important;
+        }
+        .col-span-28 { grid-column: span 28 / span 28 !important; }
+        
+        /* Drop-target highlight for cross-row vessel drag & drop */
+        .gantt-row-drop-target {
+            background-color: rgba(59, 130, 246, 0.05) !important;
+            box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.35) !important;
+            transition: background-color 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .row-terminal-select {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: none !important;
+        }
+        .row-terminal-select:hover { background-color: #F5F5F5 !important; }
+        .row-terminal-select:focus { outline: 2px solid #D81B60 !important; outline-offset: -2px; }
+
+        .interactive-port-card {
+            cursor: pointer; transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 185px !important; min-width: 185px !important; max-width: 185px !important; flex-shrink: 0 !important;
+        }
+        
+        .port-card-safe { background-color: #F0FDF4 !important; border: 1px solid #81C784 !important; color: #065F46 !important; }
+        .port-card-safe:hover { transform: translateY(-2px); background-color: #D1FAE5 !important; box-shadow: 0 6px 14px rgba(16, 185, 129, 0.12) !important; }
+
+        .port-card-review { background-color: #FFFDF0 !important; border: 1px solid rgba(252, 211, 77, 0.8) !important; color: #854D0E !important; }
+        .port-card-review:hover { transform: translateY(-2px); background-color: #FEF3C7 !important; box-shadow: 0 6px 14px rgba(245, 158, 11, 0.15) !important; }
+
+        .port-card-clash { background-color: #FFF1F2 !important; border: 1px solid #FDA4AF !important; color: #9F1239 !important; }
+        .port-card-clash:hover { transform: translateY(-2px); background-color: #FFE4E6 !important; box-shadow: 0 6px 14px rgba(244, 63, 94, 0.12) !important; }
+
+        .port-card-confirmed { background-color: #EFF6FF !important; border: 1px solid #93C5FD !important; color: #1E40AF !important; }
+        .port-card-confirmed:hover { transform: translateY(-2px); background-color: #DBEAFE !important; box-shadow: 0 6px 14px rgba(59, 130, 246, 0.15) !important; }
+
+        @keyframes floatBob { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-3px); } }
+        .animate-float-bob {
+            animation: floatBob 2.4s ease-in-out infinite !important;
+            box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.25), 0 4px 8px -2px rgba(15, 23, 42, 0.15) !important;
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* Dashed 6-hour guide lines inside Gantt grid columns */
+        .gantt-hour-grid {
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 25% 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden antialiased text-sm bg-neutral-50 text-neutral-900">
+
+    <header class="bg-white border-b border-neutral-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm min-h-[56px]">
+        <div class="flex items-center space-x-3">
+            <button id="header-back-btn" onclick="showScheduleView()" disabled class="ds-btn border border-neutral-300 bg-neutral-100 text-neutral-500 opacity-80 cursor-not-allowed transition-all !py-1 !px-2.5 text-sm font-extrabold rounded-md">
+                ←
+            </button>
+            <span class="text-white font-extrabold px-3 py-1.5 rounded-md tracking-wider text-xs shadow-sm inline-block" style="background-color: #D81B60 !important; color: #ffffff !important;">PFS POC v2.0</span>
+            <span class="text-neutral-300">|</span>
+            <h1 class="font-bold text-neutral-800 text-base m-0 p-0 inline-block" id="main-brand-title">Proforma Schedule Overview</h1>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <button onclick="saveSimulationState()" class="bg-white border border-primary-300 text-primary-600 font-extrabold hover:bg-primary-50 rounded-lg shadow-2xs !py-1.5 !px-4 text-xs flex items-center gap-1.5 transition-all cursor-pointer">
+                <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                <span>Save</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 max-w-[1680px] mx-auto w-full space-y-4">
+
+        <section class="bg-white rounded-xl border border-neutral-200 p-4 shadow-2xs">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[11px] font-semibold text-neutral-500"><span class="maritime-tooltip" data-tooltip="[대항로 권역] 아시아-미주, 유럽 등 선박이 정기적으로 운항하는 거대 해역 구분입니다.">Trade</span></span>
+                            <select id="filter-trade" onchange="onTradeFilterChange(this.value)" class="w-36 bg-white border border-neutral-300 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-neutral-500 font-medium text-neutral-800 cursor-pointer shadow-2xs">
+                                <option value="All">All Trades</option>
+                                <option value="EC" selected>EC</option>
+                                <option value="PS-FE">PS-FE</option>
+                                <option value="PN">PN</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[11px] font-semibold text-neutral-500"><span class="maritime-tooltip" data-tooltip="[서비스 노선] 정해진 기항 항구들을 매주 일정한 간격으로 순회하는 정기선 항로 명칭입니다.">Lanes</span></span>
+                            <select id="filter-lanes" onchange="onLaneFilterChange(this.value)" class="w-36 bg-white border border-neutral-300 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-neutral-500 font-medium text-neutral-800 cursor-pointer shadow-2xs">
+                                <option value="All" selected>All Lanes</option>
+                                <option value="EC1">EC1</option>
+                                <option value="EC2">EC2</option>
+                                <option value="ECT">ECT</option>
+                                <option value="FP2">FP2</option>
+                                <option value="PN1">PN1</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[11px] font-semibold text-neutral-500"><span class="maritime-tooltip" data-tooltip="[기항 항만] 선박이 화물 하역 및 연료 보급을 위해 정박하는 주요 무역항의 국제 약어입니다.">Port</span></span>
+                            <select id="filter-ports" onchange="onPortFilterChange(this.value)" class="w-36 bg-white border border-neutral-300 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-neutral-500 font-medium text-neutral-800 cursor-pointer shadow-2xs">
+                                <option value="All" selected>All Ports</option>
+                                <option value="KRPUS">KRPUS</option>
+                                <option value="TWKHH">TWKHH</option>
+                                <option value="CNYTN">CNYTN</option>
+                                <option value="CNSHA">CNSHA</option>
+                                <option value="SGSIN">SGSIN</option>
+                                <option value="PAPCA">PAPCA</option>
+                                <option value="USNYC">USNYC</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[11px] font-semibold text-neutral-500"><span class="maritime-tooltip" data-tooltip="[전용 터미널] 항만 내에서 화물을 실제 싣고 내리는 구체적인 안벽/부두 시설 운영 구역입니다. 복수 선택이 가능합니다.">Terminal</span></span>
+                            <div class="relative w-44">
+                                <button type="button" id="terminal-ms-btn" onclick="toggleTerminalDropdown(event)" class="w-44 bg-white border border-neutral-300 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-neutral-500 font-medium text-neutral-800 cursor-pointer shadow-2xs flex items-center justify-between gap-1.5 text-left">
+                                    <span id="terminal-ms-label" class="truncate">All Terminals</span>
+                                    <svg class="w-3 h-3 shrink-0 text-neutral-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+                                </button>
+                                <div id="terminal-ms-panel" class="hidden absolute z-[60] mt-1 w-56 bg-white border border-neutral-200 rounded-lg shadow-elevation-3-4 py-1 max-h-72 overflow-y-auto custom-scrollbar">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="applySearchFilter()" class="bg-white border border-primary-300 text-primary-600 font-extrabold hover:bg-primary-50 rounded-lg px-4 py-1.5 text-xs shadow-2xs transition-all self-end cursor-pointer">
+                    Search
+                </button>
+            </div>
+        </section>
+
+        <!-- Terminal Capacity Constraint Bar -->
+        <div id="terminal-constraint-bar" class="bg-secondary-50/70 border border-secondary-200 rounded-xl px-5 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs text-secondary-900 font-medium shadow-2xs transition-all duration-200">
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                <span class="font-extrabold text-secondary-800 flex items-center gap-1.5 shrink-0">
+                    <span id="constraint-warning-badge" class="bg-neutral-900 text-amber-400 border border-neutral-700 rounded-full p-1 shadow-2xs flex items-center justify-center shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                    </span>
+                    <span class="maritime-tooltip" data-tooltip="[터미널 수용 한도 제약] 크레인 하역 능력, 주간 최대 처리량, 남아있는 가용 처리 물동량 한계 지표입니다.">Terminal Capacity Constraint</span>
+                    
+                    <!-- Single-Select Dropdown (Clean button without badge when collapsed) -->
+                    <div class="relative inline-block text-left">
+                        <button type="button" id="constraint-term-btn" onclick="toggleConstraintTermDropdown(event)" class="bg-white border border-secondary-300 hover:bg-neutral-50 text-secondary-900 px-2.5 py-1 rounded-lg font-bold text-xs shadow-2xs cursor-pointer outline-none flex items-center gap-1.5 transition-all">
+                            <span id="constraint-term-label" class="font-bold font-mono">KRPUSHN</span>
+                            <span id="constraint-term-badge"></span>
+                            <svg class="w-3.5 h-3.5 text-secondary-600 shrink-0 ml-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+                        </button>
+                        <div id="constraint-term-panel" class="hidden absolute z-[70] left-0 mt-1 w-52 bg-white border border-neutral-200 rounded-lg shadow-elevation-3-4 py-1 max-h-60 overflow-y-auto custom-scrollbar">
+                        </div>
+                    </div>
+                </span>
+                
+                <span class="text-secondary-300/80 font-bold">|</span>
+                <span><span class="maritime-tooltip" data-tooltip="[시간당 크레인 하역 속도] 안벽 크레인이 1시간 동안 선박에서 선적·하역 처리하는 컨테이너 수량(Moves/h)">Net Prod.</span>: <strong id="constraint-net-prod" class="font-bold font-mono text-secondary-900">75 Moves/h</strong></span>
+                
+                <div id="constraint-details" class="flex flex-wrap items-center gap-x-4 gap-y-1"></div>
+            </div>
+        </div>
+
+        <section id="screen-schedule" class="tab-content block space-y-4">
+
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="font-extrabold text-neutral-900 text-base tracking-tight flex items-center gap-2">
+                    <span class="maritime-tooltip" data-tooltip="[프로포마 기항 체인 스케줄] 선박이 표준적으로 운항하도록 기획된 노선별 정기 입출항 순서 및 체류 시간 목록입니다.">Proforma Calling Ports Chain</span>
+                </h2>
+
+                <!-- Status Legend -->
+                <div class="flex items-center gap-2.5 bg-white px-3.5 py-1.5 rounded-lg border border-neutral-200 text-xs select-none shadow-2xs">
+                    <span class="text-neutral-500 font-bold text-[11px] uppercase tracking-wide border-r border-neutral-200 pr-2">STATUS</span>
+                    <div class="flex items-center space-x-2.5">
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-blue-100 border border-blue-400 text-blue-800 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5 text-[9px] font-black">✓</span> Done
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-emerald-100 border border-emerald-400 text-emerald-800 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5">
+                                <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><circle cx="12" cy="12" r="8" /></svg>
+                            </span> Safe
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-amber-100 border border-amber-400 text-amber-900 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5">
+                                <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M12 4L4 20H20L12 4Z" stroke-linejoin="round" /></svg>
+                            </span> Review
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-rose-100 border border-rose-400 text-rose-800 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5">
+                                <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" /></svg>
+                            </span> Clash
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-neutral-200 border border-neutral-400 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5 text-[8px] font-black text-neutral-700">🔒</span> Dedicated
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Master Grid Table -->
+            <div class="bg-white rounded-2xl border border-neutral-200 shadow-elevation-1-2 overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="ds-grid w-full text-left border-collapse min-w-[1200px]">
+                        <thead>
+                            <tr class="bg-neutral-100 text-neutral-600 uppercase text-[11px] tracking-wider font-extrabold border-b border-neutral-200">
+                                <th class="py-4 px-4 w-[60px] border-r border-neutral-200 text-left">Trade</th>
+                                <th class="py-4 px-4 w-[70px] border-r border-neutral-200 text-left">Lane</th>
+                                <th class="py-4 px-4 w-[80px] border-r border-neutral-200 text-left">TEU</th>
+                                <th class="py-4 px-4 w-[85px] border-r border-neutral-200 text-left">Vessel Qty</th>
+                                <th class="py-4 px-4 w-[85px] border-r border-neutral-200 text-left">Port Count</th>
+                                <th class="py-4 px-5 text-left">Calling Ports & Terminal Chain Sequence</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-200" id="master-grid-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="screen-gantt" class="tab-content hidden space-y-3 pt-1">
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-1">
+                <h3 class="font-extrabold text-neutral-900 text-base tracking-tight flex items-center gap-2">
+                    <span class="maritime-tooltip" data-tooltip="[선석 기항지 네트워크] 선박들이 어떤 경로 순서로 항구들을 방문하는지 연결해 놓은 기항 순환 구조 체계입니다.">Lane Network Rotation</span>
+                </h3>
+
+                <!-- Status Legend -->
+                <div class="flex items-center gap-2.5 bg-white px-3.5 py-1.5 rounded-lg border border-neutral-200 text-xs select-none shadow-2xs">
+                    <span class="text-neutral-500 font-bold text-[11px] uppercase tracking-wide border-r border-neutral-200 pr-2">STATUS</span>
+                    <div class="flex items-center space-x-2.5">
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-blue-100 border border-blue-400 text-blue-800 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5 text-[9px] font-black">✓</span> Done
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-emerald-100 border border-emerald-400 text-emerald-800 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5">
+                                <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><circle cx="12" cy="12" r="8" /></svg>
+                            </span> Safe
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-amber-100 border border-amber-400 text-amber-900 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5">
+                                <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M12 4L4 20H20L12 4Z" stroke-linejoin="round" /></svg>
+                            </span> Review
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-rose-100 border border-rose-400 text-rose-800 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5">
+                                <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" /></svg>
+                            </span> Clash
+                        </span>
+                        <span class="flex items-center gap-1 font-bold text-neutral-800 text-[11px]">
+                            <span class="bg-neutral-200 border border-neutral-400 p-0.5 rounded flex items-center justify-center w-3.5 h-3.5 text-[8px] font-black text-neutral-700">🔒</span> Dedicated
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rotation Metrics Panel -->
+            <div class="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm space-y-3.5">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
+                    <div class="flex flex-wrap items-center gap-3 text-xs font-bold text-neutral-800">
+                        <span><span class="maritime-tooltip" data-tooltip="[선적 용량]">Capacity (TEU)</span>: <strong id="top-lane-capacity" class="text-neutral-900 font-mono font-extrabold text-sm ml-0.5">12,000</strong></span>
+                        <span class="text-neutral-300 font-normal">|</span>
+                        <span><span class="maritime-tooltip" data-tooltip="[배 가동 척수]">Vessel Qty</span>: <strong id="top-lane-vessel-qty" class="text-neutral-900 font-mono font-extrabold text-sm ml-0.5">13</strong></span>
+                        <span class="text-neutral-300 font-normal">|</span>
+                        <span><span class="maritime-tooltip" data-tooltip="[총 기항지 수]">Port Count</span>: <strong id="top-lane-port-count" class="text-neutral-900 font-mono font-extrabold text-sm ml-0.5">12</strong></span>
+                    </div>
+
+                    <div class="flex items-center gap-2.5">
+                        <div class="flex items-center gap-2 bg-primary-50/80 border border-primary-200 px-3 py-1 rounded-md text-xs font-semibold shadow-2xs">
+                            <span class="text-primary-950 font-bold flex items-center gap-2">
+                                <span><span class="maritime-tooltip" data-tooltip="[노선 전체 순환 기간]">Total Rotation Duration</span>: <strong id="top-lane-rotation-duration" class="text-primary-600 font-mono font-extrabold">2372.2 hrs (98.8 Days)</strong></span>
+                                <span id="top-lane-rotation-warning" class="hidden"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-start gap-x-2.5 gap-y-3 text-xs font-semibold py-1 overflow-x-auto custom-scrollbar" id="port-rotation-list">
+                </div>
+            </div>
+
+            <!-- Gantt Chart Timeline Board with Exact Grid Alignment -->
+            <div class="bg-white rounded-2xl border border-neutral-200 shadow-elevation-1-2 overflow-hidden flex flex-col relative" id="gantt-board-wrapper">
+                <div class="w-full p-4 relative overflow-x-auto custom-scrollbar">
+                    <div class="min-w-[980px]">
+                        
+                        <!-- Days Header with Centered 6-Hour Ticks -->
+                        <div class="grid grid-cols-30 bg-neutral-50 text-center text-xs font-bold text-neutral-600 border-b border-neutral-200">
+                            <div class="col-span-1 border-r border-neutral-200 py-3 bg-neutral-100 flex items-center justify-center font-bold">Trade</div>
+                            <div class="col-span-1 border-r border-neutral-200 py-3 bg-neutral-100 flex items-center justify-center font-bold">Lane</div>
+                            <div class="col-span-1 border-r border-neutral-200 py-3 bg-neutral-100 flex items-center justify-center font-bold">
+                                <span class="maritime-tooltip" data-tooltip="[선석/터미널] 각 Row(항로)별로 독립적으로 배정된 물리적 하버 터미널입니다. 드롭다운으로 Row마다 다른 선석을 지정할 수 있습니다.">Terminal</span>
+                            </div>
+                            
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div class="text-primary-500">SUN</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5">
+                                    <span class="text-center">06</span>
+                                    <span class="text-center">12</span>
+                                    <span class="text-center">18</span>
+                                    <span class="text-center">24</span>
+                                </div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>MON</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5">
+                                    <span class="text-center">06</span>
+                                    <span class="text-center">12</span>
+                                    <span class="text-center">18</span>
+                                    <span class="text-center">24</span>
+                                </div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>TUE</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5">
+                                    <span class="text-center">06</span>
+                                    <span class="text-center">12</span>
+                                    <span class="text-center">18</span>
+                                    <span class="text-center">24</span>
+                                </div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>WED</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5">
+                                    <span class="text-center">06</span>
+                                    <span class="text-center">12</span>
+                                    <span class="text-center">18</span>
+                                    <span class="text-center">24</span>
+                                </div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>THU</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5">
+                                    <span class="text-center">06</span>
+                                    <span class="text-center">12</span>
+                                    <span class="text-center">18</span>
+                                    <span class="text-center">24</span>
+                                </div>
+                            </div>
+                            <div class="col-span-4 border-r border-neutral-200 py-2">
+                                <div>FRI</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5">
+                                    <span class="text-center">06</span>
+                                    <span class="text-center">12</span>
+                                    <span class="text-center">18</span>
+                                    <span class="text-center">24</span>
+                                </div>
+                            </div>
+                            <div class="col-span-4 py-2">
+                                <div class="text-blue-600 font-black">SAT</div>
+                                <div class="grid grid-cols-4 text-[9px] text-neutral-400 font-mono mt-0.5">
+                                    <span class="text-center">06</span>
+                                    <span class="text-center">12</span>
+                                    <span class="text-center">18</span>
+                                    <span class="text-center">24</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gantt Rows Container -->
+                        <div class="divide-y divide-neutral-200 relative bg-white min-h-[312px]" id="gantt-board">
+                            
+                            <!-- Dashed 6-hour guide lines background -->
+                            <div class="absolute inset-0 grid grid-cols-30 pointer-events-none z-0">
+                                <div class="col-span-1 border-r border-neutral-100 h-full"></div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full"></div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full gantt-hour-grid"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full gantt-hour-grid"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full gantt-hour-grid"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full gantt-hour-grid"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full gantt-hour-grid"></div>
+                                <div class="col-span-4 border-r border-neutral-200 h-full gantt-hour-grid"></div>
+                                <div class="col-span-4 h-full gantt-hour-grid"></div>
+                            </div>
+
+                            <!-- Row 1 (EC1) -->
+                            <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-primary-600 bg-neutral-100 font-black" id="gantt-row-1-lane">EC1</div>
+                                <select onchange="setRowTerminal(1, this.value)" class="row-terminal-select col-span-1 border-r border-neutral-200 h-full w-full self-stretch text-center font-mono font-bold text-[11px] text-neutral-700 bg-neutral-100 cursor-pointer" id="gantt-row-1-terminal"></select>
+                                <div onclick="handleRowEmptyClick(event, 1, 'EC', 'EC1')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-1-vessels"></div>
+                            </div>
+
+                            <!-- Row 2 (EC2) -->
+                            <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-600 bg-neutral-100" id="gantt-row-2-lane">EC2</div>
+                                <select onchange="setRowTerminal(2, this.value)" class="row-terminal-select col-span-1 border-r border-neutral-200 h-full w-full self-stretch text-center font-mono font-bold text-[11px] text-neutral-700 bg-neutral-100 cursor-pointer" id="gantt-row-2-terminal"></select>
+                                <div onclick="handleRowEmptyClick(event, 2, 'EC', 'EC2')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-2-vessels"></div>
+                            </div>
+
+                            <!-- Row 3 (ECT) -->
+                            <div class="grid grid-cols-30 items-center min-h-[104px] relative z-10">
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-800 bg-neutral-100">EC</div>
+                                <div class="col-span-1 border-r border-neutral-200 h-full self-stretch flex items-center justify-start pl-3 font-bold text-neutral-600 bg-neutral-100" id="gantt-row-3-lane">ECT</div>
+                                <select onchange="setRowTerminal(3, this.value)" class="row-terminal-select col-span-1 border-r border-neutral-200 h-full w-full self-stretch text-center font-mono font-bold text-[11px] text-neutral-700 bg-neutral-100 cursor-pointer" id="gantt-row-3-terminal"></select>
+                                <div onclick="handleRowEmptyClick(event, 3, 'EC', 'ECT')" class="col-span-28 relative h-full min-h-[104px] cursor-pointer" id="row-3-vessels"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <div id="toast" class="fixed bottom-6 right-6 bg-neutral-900 text-white px-5 py-3.5 rounded-xl shadow-elevation-5-6 flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-xs pointer-events-none">
+        <span id="toast-message" class="font-medium">업데이트가 완료되었습니다.</span>
+    </div>
+
+    <!-- CONFIRMATION MODAL FOR DELETION -->
+    <div id="delete-modal" class="fixed inset-0 bg-neutral-900/60 backdrop-blur-xs flex items-center justify-center hidden z-[100000]">
+        <div class="bg-white rounded-xl border border-neutral-200 p-5 shadow-elevation-7-8 max-w-sm w-full space-y-4 text-left">
+            <div class="flex items-center gap-2.5 text-rose-600 font-extrabold text-sm">
+                <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <span>Delete Schedule Confirmation</span>
+            </div>
+            <p class="text-xs font-semibold text-neutral-800 leading-relaxed">
+                Are you sure you want to delete this schedule?
+            </p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeDeleteModal()" class="px-3.5 py-1.5 rounded-lg border border-neutral-300 bg-neutral-100 text-neutral-700 hover:bg-neutral-200 text-xs font-bold transition-all cursor-pointer">
+                    Cancel
+                </button>
+                <button id="modal-confirm-delete-btn" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-2xs transition-all cursor-pointer">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SMART HOVER TOOLTIP (GANTT) -->
+    <div id="gantt-vessel-tooltip" class="fixed hidden bg-neutral-900/95 backdrop-blur-md text-white p-3.5 rounded-xl shadow-elevation-7-8 text-xs space-y-1.5 border border-neutral-700 min-w-[270px] max-w-[320px] z-[9999] pointer-events-none transition-opacity duration-150 text-left"></div>
+
+    <!-- SINGLE GLOBAL MARITIME GLOSSARY TOOLTIP -->
+    <div id="global-maritime-tooltip" class="fixed hidden bg-neutral-900 text-neutral-100 px-4 py-2.5 rounded-xl text-xs leading-relaxed font-semibold max-w-[280px] shadow-elevation-7-8 border border-neutral-700 z-[999999] pointer-events-none opacity-0 transition-opacity duration-150 text-left whitespace-normal"></div>
+
+    <script>
+        const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+        // Terminal capacity constraint database
+        const terminalConstraintData = {
+            'KRPUSHN': { name: 'KRPUSHN', netProd: 75, maxVol: 15000, currentVol: 9800, isWarning: true, hasConstraint: true },
+            'TWKHH16':  { name: 'TWKHH16',  netProd: 80, maxVol: 12000, currentVol: 10800, isWarning: true, hasConstraint: true },
+            'CNYTN01':  { name: 'CNYTN01',  netProd: 85, maxVol: 18000, currentVol: 12500, isWarning: false, hasConstraint: false },
+            'PAPCA10': { name: 'PAPCA10', netProd: 60, maxVol: 10000, currentVol: 8900,  isWarning: false, hasConstraint: false },
+            'USNYC01': { name: 'USNYC01', netProd: 70, maxVol: 14000, currentVol: 7200,  isWarning: false, hasConstraint: true },
+            'SGSIN04': { name: 'SGSIN04', netProd: 90, maxVol: 20000, currentVol: 13000, isWarning: false, hasConstraint: false },
+            'KRPUS01': { name: 'KRPUS01', netProd: 65, maxVol: 11000, currentVol: 9900,  isWarning: true, hasConstraint: true },
+            'KRPUSN1': { name: 'KRPUSN1', netProd: 72, maxVol: 13000, currentVol: 8100,  isWarning: false, hasConstraint: false },
+            'CNSHA01':  { name: 'CNSHA01',  netProd: 88, maxVol: 17000, currentVol: 14200, isWarning: true, hasConstraint: true },
+            'All':     { name: 'All Terminals', netProd: 78, maxVol: 120000, currentVol: 84000, isWarning: false, hasConstraint: false }
+        };
+
+        // Complete Lane database mapping for ONE operations suite
+        const laneProfiles = {
+            'EC1': {
+                trade: 'EC',
+                capacity: '12,000',
+                vesselQty: '14',
+                portCount: '12',
+                rotationDuration: '2372.2 hrs (98.8 Days)',
+                nodes: [
+                    { code: 'TWKHH16', label: '1. TWKHH (TWKHH16:E)', status: 'Clash', etb: 'SAT 18:00', etd: 'SUN 12:00', stay: '18.0h' },
+                    { code: 'CNYTN01', label: '2. CNYTN (CNYTN01:E)', status: 'Review', etb: 'MON 16:00', etd: 'TUE 13:00', stay: '21.0h' },
+                    { code: 'KRPUSHN', label: '3. KRPUS (KRPUSHN:E)', status: 'Done', etb: 'WED 20:00', etd: 'FRI 02:00', stay: '30.0h' },
+                    { code: 'PAPCA10', label: '4. PAPCA (PAPCA10:E)', status: 'Review', etb: 'WED 20:00', etd: 'THU 20:00', stay: '24.0h' },
+                    { code: 'USNYC01', label: '5. USNYC (USNYC01:E)', status: 'Safe', etb: 'SUN 02:00', etd: 'MON 10:00', stay: '32.0h' },
+                    { code: 'SGSIN04', label: '6. SGSIN (SGSIN04:W)', status: 'Safe', etb: 'TUE 06:00', etd: 'WED 12:00', stay: '30.0h' },
+                    { code: 'TWKHH16', label: '7. TWKHH (TWKHH16:W)', status: 'Clash', etb: 'SAT 18:00', etd: 'SUN 12:00', stay: '18.0h' }
+                ],
+                legs: [
+                    { id: 0, from: 'TWKHH16', to: 'CNYTN01', distance: 341, canalDist: 0, time: 26, speed: 13.1 },
+                    { id: 1, from: 'CNYTN01', to: 'KRPUSHN', distance: 620, canalDist: 0, time: 42, speed: 14.8 },
+                    { id: 2, from: 'KRPUSHN', to: 'PAPCA10', distance: 1532, canalDist: 150, time: 102, speed: 15.1 },
+                    { id: 3, from: 'PAPCA10', to: 'USNYC01', distance: 1980, canalDist: 80, time: 132, speed: 15.0 },
+                    { id: 4, from: 'USNYC01', to: 'SGSIN04', distance: 10800, canalDist: 0, time: 540, speed: 20.0 },
+                    { id: 5, from: 'SGSIN04', to: 'TWKHH16', distance: 1450, canalDist: 0, time: 84, speed: 17.2 }
+                ]
+            },
+            'EC2': {
+                trade: 'EC',
+                capacity: '10,000',
+                vesselQty: '13',
+                portCount: '10',
+                rotationDuration: '2184.0 hrs (91.0 Days)',
+                nodes: [
+                    { code: 'SGSIN04', label: '1. SGSIN (SGSIN04:E)', status: 'Safe', etb: 'SUN 03:00', etd: 'MON 09:00', stay: '30.0h' },
+                    { code: 'CNYTN01', label: '2. CNYTN (CNYTN01:E)', status: 'Review', etb: 'MON 05:30', etd: 'TUE 02:30', stay: '21.0h' },
+                    { code: 'CNSHA01', label: '3. CNSHA (CNSHA01:E)', status: 'Review', etb: 'THU 13:30', etd: 'FRI 19:30', stay: '30.0h' },
+                    { code: 'KRPUSHN', label: '4. KRPUS (KRPUSHN:E)', status: 'Safe', etb: 'MON 11:00', etd: 'TUE 12:00', stay: '25.0h' },
+                    { code: 'PAPCA10', label: '5. PAPCA (PAPCA10:E)', status: 'Review', etb: 'MON 18:00', etd: 'TUE 18:00', stay: '24.0h' },
+                    { code: 'SGSIN04', label: '6. SGSIN (SGSIN04:W)', status: 'Safe', etb: 'SUN 03:00', etd: 'MON 09:00', stay: '30.0h' }
+                ],
+                legs: [
+                    { id: 0, from: 'SGSIN04', to: 'CNYTN01', distance: 1450, canalDist: 0, time: 84, speed: 17.2 },
+                    { id: 1, from: 'CNYTN01', to: 'CNSHA01', distance: 820, canalDist: 0, time: 59, speed: 13.9 },
+                    { id: 2, from: 'CNSHA01', to: 'KRPUSHN', distance: 540, canalDist: 0, time: 36, speed: 15.0 },
+                    { id: 3, from: 'KRPUSHN', to: 'PAPCA10', distance: 2310, canalDist: 120, time: 154, speed: 15.0 },
+                    { id: 4, from: 'PAPCA10', to: 'SGSIN04', distance: 11200, canalDist: 120, time: 560, speed: 20.0 }
+                ]
+            },
+            'ECT': {
+                trade: 'EC',
+                capacity: '11,500',
+                vesselQty: '12',
+                portCount: '11',
+                rotationDuration: '2004.0 hrs (83.5 Days)',
+                nodes: [
+                    { code: 'CNYTN01', label: '1. CNYTN (CNYTN01:E)', status: 'Review', etb: 'SAT 12:00', etd: 'SUN 16:00', stay: '28.0h' },
+                    { code: 'KRPUSHN', label: '2. KRPUS (KRPUSHN:E)', status: 'Safe', etb: 'TUE 04:00', etd: 'WED 10:00', stay: '30.0h' },
+                    { code: 'PAPCA10', label: '3. PAPCA (PAPCA10:E)', status: 'Safe', etb: 'THU 22:00', etd: 'FRI 14:00', stay: '16.0h' },
+                    { code: 'USNYC01', label: '4. USNYC (USNYC01:E)', status: 'Review', etb: 'MON 18:00', etd: 'TUE 22:00', stay: '28.0h' },
+                    { code: 'CNYTN01', label: '5. CNYTN (CNYTN01:W)', status: 'Review', etb: 'SAT 12:00', etd: 'SUN 16:00', stay: '28.0h' }
+                ],
+                legs: [
+                    { id: 0, from: 'CNYTN01', to: 'KRPUSHN', distance: 620, canalDist: 0, time: 48, speed: 12.9 },
+                    { id: 1, from: 'KRPUSHN', to: 'PAPCA10', distance: 1800, canalDist: 100, time: 120, speed: 15.0 },
+                    { id: 2, from: 'PAPCA10', to: 'USNYC01', distance: 1980, canalDist: 80, time: 132, speed: 15.0 },
+                    { id: 3, from: 'USNYC01', to: 'CNYTN01', distance: 10800, canalDist: 0, time: 540, speed: 20.0 }
+                ]
+            },
+            'FP2': {
+                trade: 'PS-FE',
+                capacity: '14,000',
+                vesselQty: '14',
+                portCount: '14',
+                rotationDuration: '2352.0 hrs (98.0 Days)',
+                nodes: [
+                    { code: 'CNYTN01', label: '1. CNYTN (CNYTN01:E)', status: 'Review', etb: 'TUE 08:00', etd: 'WED 18:00', stay: '34.0h' },
+                    { code: 'KRPUSHN', label: '2. KRPUS (KRPUSHN:E)', status: 'Safe', etb: 'THU 10:00', etd: 'FRI 16:00', stay: '30.0h' },
+                    { code: 'SGSIN04', label: '3. SGSIN (SGSIN04:E)', status: 'Done', etb: 'MON 06:00', etd: 'TUE 12:00', stay: '30.0h' },
+                    { code: 'CNYTN01', label: '4. CNYTN (CNYTN01:W)', status: 'Review', etb: 'TUE 08:00', etd: 'WED 18:00', stay: '34.0h' }
+                ],
+                legs: [
+                    { id: 0, from: 'CNYTN01', to: 'KRPUSHN', distance: 620, canalDist: 0, time: 48, speed: 12.9 },
+                    { id: 1, from: 'KRPUSHN', to: 'SGSIN04', distance: 2400, canalDist: 0, time: 150, speed: 16.0 },
+                    { id: 2, from: 'SGSIN04', to: 'CNYTN01', distance: 1450, canalDist: 0, time: 84, speed: 17.2 }
+                ]
+            },
+            'PN1': {
+                trade: 'PN',
+                capacity: '11,000',
+                vesselQty: '12',
+                portCount: '11',
+                rotationDuration: '2016.0 hrs (84.0 Days)',
+                nodes: [
+                    { code: 'KRPUSHN', label: '1. KRPUS (KRPUSHN:E)', status: 'Safe', etb: 'MON 08:00', etd: 'TUE 14:00', stay: '30.0h' },
+                    { code: 'USNYC01', label: '2. USNYC (USNYC01:E)', status: 'Review', etb: 'WED 18:00', etd: 'THU 22:00', stay: '28.0h' },
+                    { code: 'TWKHH16', label: '3. TWKHH (TWKHH16:E)', status: 'Clash', etb: 'SUN 10:00', etd: 'MON 16:00', stay: '30.0h' },
+                    { code: 'KRPUSHN', label: '4. KRPUS (KRPUSHN:W)', status: 'Safe', etb: 'MON 08:00', etd: 'TUE 14:00', stay: '30.0h' }
+                ],
+                legs: [
+                    { id: 0, from: 'KRPUSHN', to: 'USNYC01', distance: 2100, canalDist: 0, time: 120, speed: 17.5 },
+                    { id: 1, from: 'USNYC01', to: 'TWKHH16', distance: 680, canalDist: 0, time: 36, speed: 18.8 },
+                    { id: 2, from: 'TWKHH16', to: 'KRPUSHN', distance: 980, canalDist: 0, time: 65, speed: 15.1 }
+                ]
+            }
+        };
+
+        let currentActiveLane = 'EC1';
+
+        const LANE_ROW_MAP = { 'EC1': 1, 'EC2': 2, 'ECT': 3, 'FP2': 1, 'PN1': 2 };
+        const ROW_LANE_MAP = { 1: 'EC1', 2: 'EC2', 3: 'ECT' };
+
+        const TERMINAL_OPTIONS = [
+            { code: 'KRPUSHN', label: 'KRPUSHN', hasConstraint: true, port: 'KRPUS' },
+            { code: 'KRPUS01', label: 'KRPUS01', hasConstraint: true, port: 'KRPUS' },
+            { code: 'KRPUSN1', label: 'KRPUSN1', hasConstraint: false, port: 'KRPUS' },
+            { code: 'TWKHH16', label: 'TWKHH16', hasConstraint: true, port: 'TWKHH' },
+            { code: 'CNSHA01', label: 'CNSHA01', hasConstraint: true, port: 'CNSHA' },
+            { code: 'CNYTN01', label: 'CNYTN01', hasConstraint: false, port: 'CNYTN' },
+            { code: 'PAPCA10', label: 'PAPCA10', hasConstraint: false, port: 'PAPCA' },
+            { code: 'USNYC01', label: 'USNYC01', hasConstraint: true, port: 'USNYC' },
+            { code: 'SGSIN04', label: 'SGSIN04', hasConstraint: false, port: 'SGSIN' }
+        ];
+
+        let selectedTerminals = [];
+        let rowTerminals = { 1: 'KRPUSHN', 2: 'TWKHH16', 3: 'CNYTN01' };
+
+        const terminalSchedulesPreset = {
+            'KRPUSHN': [
+                { id: 'v1_pus', lane: 'EC1', terminal: 'KRPUSHN', left: 54.76, width: 17.86, rowId: 1, status: 'Done', isConfirmed: true, isDedicated: false },
+                { id: 'v2_pus', lane: 'EC2', terminal: 'KRPUSHN', left: 20.83, width: 14.88, rowId: 2, status: 'Safe', isConfirmed: false, isDedicated: false }, 
+                { id: 'v3_pus', lane: 'ECT', terminal: 'KRPUSHN', left: 30.95, width: 17.86, rowId: 3, status: 'Review', isConfirmed: false, isDedicated: false },
+                { id: 'v_ded_msc', lane: 'MSC_BERTH_DED', terminal: 'KRPUSHN', left: 2.38, width: 21.42, rowId: 1, status: 'Dedicated', isConfirmed: false, isDedicated: true },
+                { id: 'v_ded_hmm', lane: 'HMM_HPNT_DED', terminal: 'KRPUSHN', left: 64.28, width: 19.04, rowId: 2, status: 'Dedicated', isConfirmed: false, isDedicated: true }
+            ],
+            'TWKHH16': [
+                { id: 'v1_khh', lane: 'EC1', terminal: 'TWKHH16', left: 85.71, width: 10.71, rowId: 1, status: 'Clash', isConfirmed: false, isDedicated: false },
+                { id: 'v_ded_wanhai', lane: 'WANHAI_T6_DED', terminal: 'TWKHH16', left: 20.23, width: 17.86, rowId: 2, status: 'Dedicated', isConfirmed: false, isDedicated: true },
+                { id: 'v_ded_emc_khh', lane: 'EVERGREEN_KAOHSIUNG_DED', terminal: 'TWKHH16', left: 58.33, width: 17.86, rowId: 3, status: 'Dedicated', isConfirmed: false, isDedicated: true }
+            ],
+            'CNYTN01': [
+                { id: 'v1_ytn', lane: 'EC1', terminal: 'CNYTN01', left: 23.81, width: 12.50, rowId: 1, status: 'Review', isConfirmed: false, isDedicated: false },
+                { id: 'v2_ytn', lane: 'EC2', terminal: 'CNYTN01', left: 17.56, width: 12.50, rowId: 2, status: 'Safe', isConfirmed: false, isDedicated: false },
+                { id: 'v3_ytn', lane: 'ECT', terminal: 'CNYTN01', left: 92.86, width: 16.67, rowId: 3, status: 'Review', isConfirmed: false, isDedicated: false },
+                { id: 'v_ded_cosco_ytn', lane: 'COSCO_YICT_DED', terminal: 'CNYTN01', left: 47.61, width: 20.23, rowId: 3, status: 'Dedicated', isConfirmed: false, isDedicated: true }
+            ],
+            'SGSIN04': [
+                { id: 'v_ded_psa1', lane: 'PSA_PASIR_PANJANG_DED1', terminal: 'SGSIN04', left: 32.14, width: 21.42, rowId: 1, status: 'Dedicated', isConfirmed: false, isDedicated: true },
+                { id: 'v2_sin', lane: 'EC2', terminal: 'SGSIN04', left: 1.79, width: 17.86, rowId: 2, status: 'Safe', isConfirmed: false, isDedicated: false },
+                { id: 'v_ded_pil', lane: 'PIL_SINGAPORE_DED2', terminal: 'SGSIN04', left: 73.80, width: 21.42, rowId: 3, status: 'Dedicated', isConfirmed: false, isDedicated: true }
+            ],
+            'CNSHA01': [
+                { id: 'v_ded_sipg', lane: 'SIPG_GUANDONG_DED1', terminal: 'CNSHA01', left: 1.19, width: 21.42, rowId: 1, status: 'Dedicated', isConfirmed: false, isDedicated: true },
+                { id: 'v2_sha', lane: 'EC2', terminal: 'CNSHA01', left: 65.18, width: 17.86, rowId: 2, status: 'Review', isConfirmed: false, isDedicated: false },
+                { id: 'v_ded_kmtc_sha', lane: 'KMTC_SHANGHAI_DED2', terminal: 'CNSHA01', left: 73.80, width: 21.42, rowId: 3, status: 'Dedicated', isConfirmed: false, isDedicated: true }
+            ],
+            'PAPCA10': [
+                { id: 'v1_pap', lane: 'EC1', terminal: 'PAPCA10', left: 42.85, width: 14.28, rowId: 1, status: 'Review', isConfirmed: false, isDedicated: false, isPapca: true },
+                { id: 'v2_pap', lane: 'EC2', terminal: 'PAPCA10', left: 14.28, width: 14.28, rowId: 2, status: 'Safe', isConfirmed: false, isDedicated: false, isPapca: true },
+                { id: 'v3_pap', lane: 'ECT', terminal: 'PAPCA10', left: 57.14, width: 14.28, rowId: 3, status: 'Safe', isConfirmed: false, isDedicated: false, isPapca: true },
+                { id: 'v_ded_papca', lane: 'NEOPANAMAX_CONVOY_DED', terminal: 'PAPCA10', left: 85.71, width: 14.28, rowId: 1, status: 'Dedicated', isConfirmed: false, isDedicated: true, isPapca: true }
+            ],
+            'USNYC01': [
+                { id: 'v1_nyc', lane: 'EC1', terminal: 'USNYC01', left: 1.19, width: 19.05, rowId: 1, status: 'Safe', isConfirmed: false, isDedicated: false },
+                { id: 'v_ded_apmt', lane: 'APMT_ELIZABETH_DED', terminal: 'USNYC01', left: 48.80, width: 21.42, rowId: 2, status: 'Dedicated', isConfirmed: false, isDedicated: true },
+                { id: 'v3_nyc', lane: 'ECT', terminal: 'USNYC01', left: 25.00, width: 16.67, rowId: 3, status: 'Review', isConfirmed: false, dir: 'W', isDedicated: false }
+            ],
+            'KRPUS01': [
+                { id: 'v1_p01', lane: 'EC1', terminal: 'KRPUS01', left: 15.00, width: 17.86, rowId: 1, status: 'Safe', isConfirmed: false, isDedicated: false },
+                { id: 'v_ded_kmtc_p01', lane: 'KMTC_BERTH_DED', terminal: 'KRPUS01', left: 50.00, width: 15.47, rowId: 2, status: 'Dedicated', isConfirmed: false, isDedicated: true },
+                { id: 'v3_p01', lane: 'ECT', terminal: 'KRPUS01', left: 70.00, width: 17.86, rowId: 3, status: 'Done', isConfirmed: true, isDedicated: false }
+            ],
+            'KRPUSN1': [
+                { id: 'v_ded_hjnc', lane: 'ONE_HJNC_BERTH_DED', terminal: 'KRPUSN1', left: 5.00, width: 19.04, rowId: 1, status: 'Dedicated', isConfirmed: false, isDedicated: true },
+                { id: 'v2_pn1', lane: 'EC2', terminal: 'KRPUSN1', left: 38.00, width: 17.86, rowId: 2, status: 'Safe', isConfirmed: false, isDedicated: false },
+                { id: 'v3_pn1', lane: 'ECT', terminal: 'KRPUSN1', left: 65.00, width: 17.86, rowId: 3, status: 'Review', isConfirmed: false, isDedicated: false }
+            ]
+        };
+
+        function clearGanttRowsDOM() {
+            for (let rowId = 1; rowId <= 3; rowId++) {
+                const container = document.getElementById(`row-${rowId}-vessels`);
+                if (container) {
+                    container.innerHTML = '';
+                }
+            }
+        }
+
+        function switchTerminalView(termCode, triggerToast = true) {
+            if (!termCode) return;
+
+            for (let rowId = 1; rowId <= 3; rowId++) {
+                rowTerminals[rowId] = termCode;
+                ensureTerminalOption(termCode);
+            }
+
+            clearGanttRowsDOM();
+
+            const preset = terminalSchedulesPreset[termCode];
+            if (preset && preset.length > 0) {
+                vessels = JSON.parse(JSON.stringify(preset));
+            } else {
+                vessels = [];
+                for (let rowId = 1; rowId <= 3; rowId++) {
+                    vessels.push({
+                        id: 'v' + Date.now().toString().slice(-4) + rowId,
+                        lane: ROW_LANE_MAP[rowId],
+                        terminal: termCode,
+                        left: 20 + (rowId - 1) * 15,
+                        width: 18,
+                        rowId: rowId,
+                        status: 'Safe',
+                        isConfirmed: false,
+                        isDedicated: false
+                    });
+                }
+            }
+
+            syncRowTerminalSelects();
+
+            const labelEl = document.getElementById('constraint-term-label');
+            if (labelEl) labelEl.textContent = termCode;
+            updateConstraintTerminalDropdown();
+
+            syncAllStatuses();
+
+            if (triggerToast) {
+                showToast(`[${termCode}] 터미널의 실시간 안벽 스케줄이 간트 차트에 새로 배치되었습니다.`);
+            }
+        }
+
+        let vessels = JSON.parse(JSON.stringify(terminalSchedulesPreset['KRPUSHN']));
+
+        let selectedVesselId = 'v1';
+        let activeVessel = null;
+        let activeType = null;
+        let startClientX = 0;
+        let startLeftPercent = 0;
+        let startWidthPercent = 0;
+        let currentContainerWidth = 0;
+        let dragStartRowId = null;
+        let vesselToDeleteId = null;
+
+        function percentToDayTime(percent) {
+            const totalHours = 168; 
+            const normalizedPercent = (percent % 100 + 100) % 100;
+            const halfHours = Math.round((normalizedPercent / 100) * totalHours * 2);
+            const hourValue = halfHours / 2;
+            
+            const dayIndex = Math.min(Math.floor(hourValue / 24), 6);
+            const relativeHour = hourValue % 24;
+            const hour = Math.floor(relativeHour);
+            const minute = (relativeHour % 1) >= 0.5 ? '30' : '00';
+
+            const pad = (n) => String(n).padStart(2, '0');
+            return {
+                day: daysOfWeek[dayIndex],
+                time: `${pad(hour)}:${minute}`
+            };
+        }
+
+        function getNodeStatusIconHtml(status) {
+            if (status === 'Confirmed' || status === 'Done') {
+                return `<span class="w-3.5 h-3.5 rounded bg-blue-100 border border-blue-400 text-blue-800 flex items-center justify-center text-[9px] font-black shrink-0 shadow-2xs">✓</span>`;
+            } else if (status === 'Safe') {
+                return `<span class="w-3.5 h-3.5 rounded bg-emerald-100 border border-emerald-400 text-emerald-800 flex items-center justify-center shrink-0 shadow-2xs"><svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><circle cx="12" cy="12" r="8"/></svg></span>`;
+            } else if (status === 'Review') {
+                return `<span class="w-3.5 h-3.5 rounded bg-amber-100 border border-amber-400 text-amber-950 flex items-center justify-center shrink-0 shadow-2xs"><svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M12 4L4 20H20L12 4Z" stroke-linejoin="round"/></svg></span>`;
+            } else if (status === 'Clash') {
+                return `<span class="w-3.5 h-3.5 rounded bg-rose-100 border border-rose-400 text-rose-800 flex items-center justify-center shrink-0 shadow-2xs"><svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg></span>`;
+            } else {
+                return `<span class="w-3.5 h-3.5 rounded bg-neutral-200 border border-neutral-400 text-neutral-800 flex items-center justify-center text-[8px] font-black shrink-0 shadow-2xs">🔒</span>`;
+            }
+        }
+
+        function calculateDynamicStatus(vessel) {
+            if (vessel.isDedicated || vessel.status === 'Dedicated') return 'Dedicated';
+
+            const getIntervals = (v) => {
+                if (v.left + v.width > 100) {
+                    return [
+                        { start: v.left, end: 100 },
+                        { start: 0, end: (v.left + v.width) - 100 }
+                    ];
+                }
+                return [{ start: v.left, end: v.left + v.width }];
+            };
+
+            const myIntervals = getIntervals(vessel);
+            let maxOverlapPercent = 0;
+
+            vessels.forEach(other => {
+                if (other.id === vessel.id) return;
+                if (other.rowId !== vessel.rowId && other.terminal !== vessel.terminal) return;
+
+                const otherIntervals = getIntervals(other);
+
+                myIntervals.forEach(myInt => {
+                    otherIntervals.forEach(oInt => {
+                        const overlapStart = Math.max(myInt.start, oInt.start);
+                        const overlapEnd = Math.min(myInt.end, oInt.end);
+                        if (overlapStart < overlapEnd) {
+                            const overlapWidth = overlapEnd - overlapStart;
+                            const overlapPercent = (overlapWidth / vessel.width) * 100;
+                            if (overlapPercent > maxOverlapPercent) {
+                                maxOverlapPercent = overlapPercent;
+                            }
+                        }
+                    });
+                });
+            });
+
+            vessel.lastOverlapPercent = Math.round(maxOverlapPercent);
+
+            if (maxOverlapPercent > 15) {
+                return 'Clash';
+            } else if (maxOverlapPercent > 0) {
+                return 'Review';
+            }
+
+            if (vessel.width > 24) return 'Review';
+            return 'Safe';
+        }
+
+        function renderLaneRotationUI() {
+            const container = document.getElementById('port-rotation-list');
+            if (!container) return;
+
+            const profile = laneProfiles[currentActiveLane] || laneProfiles['EC1'];
+
+            const capEl = document.getElementById('top-lane-capacity');
+            const vQtyEl = document.getElementById('top-lane-vessel-qty');
+            const pCountEl = document.getElementById('top-lane-port-count');
+            const rotDurEl = document.getElementById('top-lane-rotation-duration');
+            const rotDurWarnEl = document.getElementById('top-lane-rotation-warning');
+
+            if (capEl) capEl.textContent = profile.capacity;
+            if (vQtyEl) vQtyEl.textContent = profile.vesselQty;
+            if (pCountEl) pCountEl.textContent = profile.portCount;
+            if (rotDurEl) rotDurEl.textContent = profile.rotationDuration;
+
+            if (rotDurWarnEl) {
+                const hoursMatch = profile.rotationDuration.match(/([\d.]+)\s*hrs/);
+                const totalHours = hoursMatch ? parseFloat(hoursMatch[1]) : 0;
+                
+                const vesselQty = parseInt(profile.vesselQty, 10) || Math.round(totalHours / 168);
+                const targetHours = vesselQty * 168;
+                const diffHours = totalHours - targetHours;
+                const diffDays = (Math.abs(diffHours) / 24).toFixed(1);
+                const absDiffHours = Math.abs(diffHours).toFixed(1);
+
+                if (Math.abs(diffHours) > 0.1) {
+                    rotDurWarnEl.classList.remove('hidden');
+                    if (diffHours > 0) {
+                        rotDurWarnEl.innerHTML = `<span class="bg-rose-100 border border-rose-300 text-rose-800 px-2 py-0.5 rounded-md font-bold text-xs shadow-2xs">⚠️ +${diffDays} Days (${absDiffHours} hrs) Over Target Cycle</span>`;
+                    } else {
+                        rotDurWarnEl.innerHTML = `<span class="bg-rose-100 border border-rose-300 text-rose-800 px-2 py-0.5 rounded-md font-bold text-xs shadow-2xs">⚠️ -${diffDays} Days (${absDiffHours} hrs) Under Target Cycle</span>`;
+                    }
+                } else {
+                    rotDurWarnEl.classList.add('hidden');
+                }
+            }
+
+            const nodes = profile.nodes;
+            const legs = profile.legs;
+
+            let html = '';
+
+            nodes.forEach((node, idx) => {
+                const activeRowTerminal = rowTerminals[LANE_ROW_MAP[currentActiveLane] || 1];
+                const isSelected = (node.code === activeRowTerminal);
+                
+                const matchedVessel = vessels.find(v => v.terminal === node.code && v.lane === currentActiveLane);
+                const nodeStatus = matchedVessel ? matchedVessel.status : node.status;
+
+                let nodeFillClass = "bg-neutral-50 border-neutral-300 text-neutral-800";
+                if (nodeStatus === 'Confirmed' || nodeStatus === 'Done') nodeFillClass = "bg-blue-50/90 border-blue-300 text-blue-950";
+                else if (nodeStatus === 'Safe') nodeFillClass = "bg-emerald-50/90 border-emerald-300 text-emerald-950";
+                else if (nodeStatus === 'Review') nodeFillClass = "bg-[#FFFDF0] border-amber-300/80 text-amber-950";
+                else if (nodeStatus === 'Clash') nodeFillClass = "bg-rose-50/90 border-rose-300 text-rose-950";
+
+                const activeBorderClass = isSelected
+                    ? 'border-2 border-slate-600 font-extrabold shadow-md ring-2 ring-neutral-200 scale-[1.02]'
+                    : 'border hover:border-neutral-400 shadow-2xs';
+
+                let subTimeText = "";
+                const isPapcaNode = node.code.includes('PAPCA');
+
+                if (matchedVessel) {
+                    const startDT = percentToDayTime(matchedVessel.left);
+                    const endDT = percentToDayTime(matchedVessel.left + matchedVessel.width);
+                    const stayHours = ((Math.round((matchedVessel.width * 1.68) * 2)) / 2).toFixed(1);
+
+                    if (isPapcaNode) {
+                        subTimeText = `<span class="text-[9px] font-mono block mt-0.5">${startDT.day} <span class="bg-neutral-200 text-neutral-800 font-bold px-1 rounded border border-neutral-300">${startDT.time}</span> → ${endDT.day} <span class="bg-neutral-200 text-neutral-800 font-bold px-1 rounded border border-neutral-300">${endDT.time}</span> (${stayHours}h)</span>`;
+                    } else {
+                        subTimeText = `<span class="text-[9px] opacity-80 font-mono block mt-0.5">${startDT.day} ${startDT.time} → ${endDT.day} ${endDT.time} (${stayHours}h)</span>`;
+                    }
+                } else if (node.etb) {
+                    if (isPapcaNode) {
+                        const parts = node.etb.split(' ');
+                        const partsEtd = node.etd.split(' ');
+                        subTimeText = `<span class="text-[9px] font-mono block mt-0.5">${parts[0]} <span class="bg-neutral-200 text-neutral-800 font-bold px-1 rounded border border-neutral-300">${parts[1]}</span> → ${partsEtd[0]} <span class="bg-neutral-200 text-neutral-800 font-bold px-1 rounded border border-neutral-300">${partsEtd[1]}</span> (${node.stay})</span>`;
+                    } else {
+                        subTimeText = `<span class="text-[9px] opacity-80 font-mono block mt-0.5">${node.etb} → ${node.etd} (${node.stay})</span>`;
+                    }
+                }
+
+                html += `
+                    <button onclick="selectTerminalFromRotation('${node.code}')" data-term-node="${node.code}" class="term-rotation-btn px-3 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 text-xs font-bold flex flex-col items-start ${nodeFillClass} ${activeBorderClass}">
+                        <div class="flex items-center gap-1.5 w-full justify-between">
+                            <span>${node.label}</span>
+                            ${getNodeStatusIconHtml(nodeStatus)}
+                        </div>
+                        ${subTimeText}
+                    </button>
+                `;
+
+                if (idx < legs.length) {
+                    const leg = legs[idx];
+                    const canalText = `(${leg.canalDist || 0})`;
+
+                    html += `
+                        <div class="flex flex-col items-center justify-center min-w-[125px] max-w-[165px] flex-1 px-2 mx-1 my-0.5 space-y-0.5 shrink-0">
+                            <div class="text-[11.5px] font-black font-mono text-neutral-800 tracking-tight flex items-center gap-1">
+                                <span>${leg.distance.toLocaleString()} <span class="text-neutral-500 font-bold">${canalText}</span></span>
+                                <span class="text-[9.5px] text-neutral-500 font-semibold">NM</span>
+                            </div>
+
+                            <div class="w-full flex items-center my-0.5 px-0.5">
+                                <div class="h-[1.5px] bg-neutral-400 w-full rounded-full"></div>
+                                <div class="w-0 h-0 border-t-[3.5px] border-t-transparent border-b-[3.5px] border-b-transparent border-l-[5px] border-l-neutral-700 -ml-1"></div>
+                            </div>
+
+                            <div class="flex items-center gap-1 text-[10px]">
+                                <div class="flex items-center gap-0.5 bg-white border border-neutral-300 rounded px-1 py-0.5 shadow-2xs">
+                                    <svg class="w-2.5 h-2.5 text-neutral-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 7v5l3 3"/></svg>
+                                    <input type="number" min="1" max="999" value="${leg.time}" onchange="updateLegData(${idx}, 'time', this.value)" class="w-11 text-center font-mono font-bold text-[10px] outline-none bg-transparent text-neutral-900 focus:text-primary-600" />
+                                    <span class="text-[8.5px] text-neutral-500 font-semibold pr-0.5">h</span>
+                                </div>
+
+                                <div class="flex items-center gap-0.5 bg-white border border-neutral-300 rounded px-1 py-0.5 shadow-2xs">
+                                    <svg class="w-2.5 h-2.5 text-neutral-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    <input type="number" step="0.1" min="1" max="40" value="${leg.speed}" onchange="updateLegData(${idx}, 'speed', this.value)" class="w-11 text-center font-mono font-bold text-[10px] outline-none bg-transparent text-neutral-900 focus:text-primary-600" />
+                                    <span class="text-[8.5px] text-neutral-500 font-semibold pr-0.5">kn</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderMasterGridTable() {
+            const tbody = document.getElementById('master-grid-tbody');
+            if (!tbody) return;
+
+            const filterTrade = document.getElementById('filter-trade') ? document.getElementById('filter-trade').value : 'All';
+            const filterLane = document.getElementById('filter-lanes') ? document.getElementById('filter-lanes').value : 'All';
+            const filterPort = document.getElementById('filter-ports') ? document.getElementById('filter-ports').value : 'All';
+
+            let lanesToRender = Object.keys(laneProfiles);
+
+            if (filterTrade !== 'All') {
+                lanesToRender = lanesToRender.filter(l => laneProfiles[l].trade === filterTrade);
+            }
+            if (filterLane !== 'All') {
+                lanesToRender = lanesToRender.filter(l => l === filterLane);
+            }
+            if (filterPort !== 'All') {
+                lanesToRender = lanesToRender.filter(l => laneProfiles[l].nodes.some(n => n.code.includes(filterPort)));
+            }
+
+            if (lanesToRender.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-neutral-500 font-medium text-xs">
+                            No matching calling port chains found for selected filters.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            lanesToRender.forEach(laneKey => {
+                const profile = laneProfiles[laneKey];
+                
+                let cardsHtml = '';
+                profile.nodes.forEach((node, nodeIdx) => {
+                    let cardClass = 'port-card-safe';
+                    let badgeClass = 'bg-emerald-600 text-white';
+                    
+                    if (node.status === 'Clash') {
+                        cardClass = 'port-card-clash';
+                        badgeClass = 'bg-rose-600 text-white';
+                    } else if (node.status === 'Review') {
+                        cardClass = 'port-card-review';
+                        badgeClass = 'bg-amber-200 border border-amber-400 text-amber-950';
+                    } else if (node.status === 'Done') {
+                        cardClass = 'port-card-confirmed';
+                        badgeClass = 'bg-blue-600 text-white';
+                    }
+
+                    const etbParts = node.etb ? node.etb.split(' ') : ['-', '-'];
+                    const etdParts = node.etd ? node.etd.split(' ') : ['-', '-'];
+
+                    const isPapcaNode = node.code.includes('PAPCA');
+
+                    let timeContent = `
+                        <div><strong class="font-extrabold maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> ${node.etb}</div>
+                        <div><strong class="font-extrabold maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> ${node.etd}</div>
+                    `;
+
+                    if (isPapcaNode) {
+                        timeContent = `
+                            <div><strong class="font-extrabold maritime-tooltip" data-tooltip="[접안 예정 시각]">ETB</strong> ${etbParts[0]} <span class="text-neutral-900 font-extrabold bg-neutral-200 px-1 py-0.2 rounded border border-neutral-300 inline-block shadow-2xs">${etbParts[1]}</span></div>
+                            <div><strong class="font-extrabold maritime-tooltip" data-tooltip="[출항 예정 시각]">ETD</strong> ${etdParts[0]} <span class="text-neutral-900 font-extrabold bg-neutral-200 px-1 py-0.2 rounded border border-neutral-300 inline-block shadow-2xs">${etdParts[1]}</span></div>
+                        `;
+                    }
+
+                    const leg = profile.legs[nodeIdx - 1];
+                    const seaTimeText = leg ? `${leg.time}.0h` : '-h';
+
+                    cardsHtml += `
+                        <div onclick="navigateToGantt('${node.code}', ${nodeIdx + 1}, '${laneKey}')" class="interactive-port-card port-card ${cardClass} rounded-xl p-2.5 text-xs flex flex-col justify-between min-h-[122px] shadow-2xs">
+                            <div>
+                                <div class="flex justify-between items-start font-bold gap-2">
+                                    <span class="leading-snug flex-1 min-w-0">${node.label}</span>
+                                    <span class="status-badge ${badgeClass} px-1.5 py-0.2 rounded text-[9px] font-black uppercase shrink-0">${node.status}</span>
+                                </div>
+                                <div class="text-[10px] font-medium mt-1 space-y-0.5 leading-snug">
+                                    ${timeContent}
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[10px] pt-1 border-t border-neutral-200/80 mt-1.5">
+                                <span><strong class="font-extrabold maritime-tooltip" data-tooltip="[부두 체류 시간]">Port Time</strong> ${node.stay}</span>
+                                <span><strong class="font-extrabold maritime-tooltip" data-tooltip="[바닷길 운항 시간]">Sea Time</strong> ${seaTimeText}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                const isMultiRow = profile.nodes.length >= 7;
+                const flexLayoutClass = isMultiRow ? 'flex-wrap gap-x-3 gap-y-2.5' : 'flex-nowrap gap-3';
+
+                html += `
+                    <tr class="hover:bg-neutral-50/20 transition-all">
+                        <td class="py-6 px-4 font-bold text-neutral-800 text-left border-r border-neutral-200 bg-neutral-50">${profile.trade}</td>
+                        <td class="py-6 px-4 font-extrabold text-neutral-900 text-left border-r border-neutral-200 bg-neutral-50">${laneKey}</td>
+                        <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">${profile.capacity}</td>
+                        <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">${profile.vesselQty}</td>
+                        <td class="py-6 px-4 font-semibold text-neutral-700 text-left border-r border-neutral-200 font-mono">${profile.portCount}</td>
+                        <td class="py-6 px-5">
+                            <div class="flex items-center ${flexLayoutClass} overflow-x-auto custom-scrollbar py-1 w-full">
+                                ${cardsHtml}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function toggleConfirmVessel(e, vesselId) {
+            if (e) {
+                e.stopPropagation();
+                if (e.preventDefault) e.preventDefault();
+            }
+            const v = vessels.find(item => item.id === vesselId);
+            if (!v || v.isDedicated) return;
+            v.isConfirmed = !v.isConfirmed;
+            v.status = v.isConfirmed ? 'Done' : calculateDynamicStatus(v);
+            syncAllStatuses();
+            showToast(`[${v.lane}] Schedule confirmation state updated.`);
+        }
+
+        function promptDeleteVessel(e, vesselId) {
+            if (e) {
+                e.stopPropagation();
+                if (e.preventDefault) e.preventDefault();
+            }
+            const v = vessels.find(item => item.id === vesselId);
+            if (!v || v.isDedicated) return;
+
+            vesselToDeleteId = vesselId;
+            const modal = document.getElementById('delete-modal');
+            const confirmBtn = document.getElementById('modal-confirm-delete-btn');
+            
+            if (confirmBtn) {
+                confirmBtn.onclick = () => {
+                    deleteVessel(vesselToDeleteId);
+                    closeDeleteModal();
+                };
+            }
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('delete-modal');
+            if (modal) modal.classList.add('hidden');
+            vesselToDeleteId = null;
+        }
+
+        function deleteVessel(vesselId) {
+            const index = vessels.findIndex(v => v.id === vesselId);
+            if (index !== -1) {
+                const removed = vessels.splice(index, 1)[0];
+                const oldMain = document.getElementById(`vessel-${vesselId}`);
+                if (oldMain) oldMain.remove();
+                const oldWrap = document.getElementById(`vessel-${vesselId}-wrap`);
+                if (oldWrap) oldWrap.remove();
+
+                syncAllStatuses();
+                showToast(`[${removed.lane}] Schedule deleted successfully.`);
+            }
+        }
+
+        function renderSingleVesselBar(v, options = {}) {
+            const { isWrapSegment = false } = options;
+
+            const startDT = percentToDayTime(v.left);
+            const endDT = percentToDayTime(v.left + v.width);
+            const stayHours = ((Math.round((v.width * 1.68) * 2)) / 2).toFixed(1);
+
+            const dir = v.dir || 'E';
+            const termWithDir = `${v.terminal}:${dir}`;
+            const locked = isVesselLocked(v);
+
+            const isPapca = !!(v.isPapca || (v.terminal && v.terminal.includes('PAPCA')));
+            const startTimeFormatted = isPapca 
+                ? `${startDT.day} <span class="bg-neutral-200 text-neutral-900 font-extrabold px-1.5 py-0.5 rounded border border-neutral-300 shadow-2xs inline-block ml-0.5">${startDT.time}</span>`
+                : `${startDT.day} ${startDT.time}`;
+            const endTimeFormatted = isPapca 
+                ? `${endDT.day} <span class="bg-neutral-200 text-neutral-900 font-extrabold px-1.5 py-0.5 rounded border border-neutral-300 shadow-2xs inline-block ml-0.5">${endDT.time}</span>`
+                : `${endDT.day} ${endDT.time}`;
+
+            const wrapTag = isWrapSegment ? `<span class="bg-neutral-800 text-white text-[8px] font-black px-1 py-0.2 rounded mr-1">Wrap</span>` : '';
+
+            const checkBtnStyle = v.isConfirmed 
+                ? 'bg-blue-600 text-white border border-blue-700 shadow-xs' 
+                : 'bg-white/90 hover:bg-blue-600 hover:text-white text-neutral-600 border border-neutral-300';
+
+            const actionButtons = v.isDedicated ? `
+                <div class="flex items-center gap-1 shrink-0 pointer-events-none ml-1 relative z-40">
+                    <span class="text-[8px] font-black text-neutral-600 bg-neutral-300/80 border border-neutral-400 px-1 py-0.2 rounded uppercase tracking-wide">🔒 Dedicated</span>
+                </div>
+            ` : `
+                <div class="flex items-center gap-1.5 shrink-0 pointer-events-auto ml-1 relative z-40" onmousedown="event.stopPropagation()">
+                    <button onmousedown="event.stopPropagation()" onclick="toggleConfirmVessel(event, '${v.id}')" class="w-4 h-4 rounded-full ${checkBtnStyle} flex items-center justify-center text-[9px] font-black transition-all cursor-pointer">
+                        ✓
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onclick="promptDeleteVessel(event, '${v.id}')" class="text-neutral-500 hover:text-rose-600 font-extrabold text-xs p-0.5 transition-colors cursor-pointer border-0 bg-transparent">
+                        ✕
+                    </button>
+                </div>
+            `;
+
+            const handles = (locked || isPapca) ? '' : `
+                <div class="drag-handle-left" onmousedown="startDrag(event, '${v.id}', 'resize-left')"></div>
+                <div class="drag-handle-right" onmousedown="startDrag(event, '${v.id}', 'resize-right')"></div>
+            `;
+
+            const titleText = v.isDedicated ? termWithDir : `${v.lane} (${termWithDir})`;
+
+            return `
+                ${handles}
+                <div class="flex justify-between items-start pointer-events-none w-full overflow-hidden">
+                    <div class="min-w-0 flex-1">
+                        <div class="font-extrabold text-xs text-neutral-900 tracking-tight flex items-center gap-1 truncate">
+                            ${wrapTag}<span class="truncate">${titleText}</span>
+                        </div>
+                        <div class="text-[10px] font-mono font-bold text-neutral-800 mt-0.5 truncate leading-relaxed">
+                            ${startTimeFormatted} → ${endTimeFormatted}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        ${actionButtons}
+                    </div>
+                </div>
+                <div class="flex justify-between items-end text-[10px] pt-1 border-t border-neutral-300/80 pointer-events-none font-bold w-full overflow-hidden">
+                    <span class="truncate">Port Time: <strong class="font-mono font-extrabold text-neutral-900">${stayHours}h</strong></span>
+                    <span class="text-[9px] text-neutral-500 font-mono shrink-0">168h</span>
+                </div>
+            `;
+        }
+
+        function updateVesselDOM(v) {
+            const rowContainer = document.getElementById(`row-${v.rowId}-vessels`);
+            if (!rowContainer) return;
+
+            const oldMain = document.getElementById(`vessel-${v.id}`);
+            if (oldMain) oldMain.remove();
+            const oldWrap = document.getElementById(`vessel-${v.id}-wrap`);
+            if (oldWrap) oldWrap.remove();
+
+            const isWrap = (v.left + v.width > 100);
+            const dedicated = !!v.isDedicated;
+            const locked = isVesselLocked(v);
+
+            let colorClasses = "bg-emerald-100 border-emerald-400 text-emerald-950 hover:bg-emerald-200";
+            let activeBorderClass = "border-emerald-600";
+
+            if (dedicated) {
+                colorClasses = "bg-neutral-200 border-neutral-400 text-neutral-800 font-medium";
+                activeBorderClass = "border-neutral-500";
+            } else if (v.isConfirmed || v.status === 'Confirmed' || v.status === 'Done') {
+                colorClasses = "bg-blue-100 border-blue-400 text-blue-950 hover:bg-blue-200";
+                activeBorderClass = "border-blue-600";
+            } else if (v.status === 'Clash') {
+                colorClasses = "bg-rose-100 border-rose-400 text-rose-950 hover:bg-rose-200";
+                activeBorderClass = "border-rose-600";
+            } else if (v.status === 'Review') {
+                colorClasses = "bg-amber-100 border-amber-400 text-amber-950 hover:bg-amber-200";
+                activeBorderClass = "border-amber-500";
+            }
+
+            const activeRing = (v.id === selectedVesselId && !dedicated) 
+                ? `border-[3px] ${activeBorderClass} z-30 animate-float-bob shadow-elevation-5-6` 
+                : "border-2 shadow-2xs z-20";
+
+            const cursorClass = dedicated ? 'cursor-not-allowed pointer-events-auto' : (locked ? 'cursor-default' : 'cursor-grab active:cursor-grabbing');
+
+            const applyInteraction = (el) => {
+                el.setAttribute('onmouseenter', `showVesselTooltip(event, '${v.id}')`);
+                el.setAttribute('onmousemove', `positionSmartTooltip(event, 'gantt-vessel-tooltip')`);
+                el.setAttribute('onmouseleave', `hideVesselTooltip()`);
+                if (!dedicated) {
+                    el.setAttribute('onmousedown', `startDrag(event, '${v.id}', 'move')`);
+                    el.setAttribute('onclick', `selectVessel('${v.id}')`);
+                } else {
+                    el.setAttribute('onclick', `showToast('🔒 Dedicated slot reserved by another carrier. Selection, position, and duration are locked.')`);
+                }
+            };
+
+            if (!isWrap) {
+                const el = document.createElement('div');
+                el.id = `vessel-${v.id}`;
+                applyInteraction(el);
+
+                el.style.left = `${v.left}%`;
+                el.style.width = `${v.width}%`;
+
+                const isAtLeftEdge = (v.left <= 0.2);
+                const isAtRightEdge = ((v.left + v.width) >= 99.8);
+                let roundedClass = "rounded-xl";
+                if (isAtLeftEdge && isAtRightEdge) roundedClass = "rounded-none";
+                else if (isAtLeftEdge) roundedClass = "rounded-r-xl rounded-l-none";
+                else if (isAtRightEdge) roundedClass = "rounded-l-xl rounded-r-none";
+
+                el.className = `absolute top-1.5 h-[90px] ${colorClasses} ${roundedClass} ${activeRing} p-2 flex flex-col justify-between select-none ${cursorClass} transition-all overflow-hidden`;
+                el.innerHTML = renderSingleVesselBar(v);
+                rowContainer.appendChild(el);
+            } else {
+                const part1Left = v.left;
+                const part1Width = 100 - v.left;
+                const part2Left = 0;
+                const part2Width = (v.left + v.width) - 100;
+
+                const el1 = document.createElement('div');
+                el1.id = `vessel-${v.id}`;
+                applyInteraction(el1);
+
+                el1.style.left = `${part1Left}%`;
+                el1.style.width = `${part1Width}%`;
+                el1.className = `absolute top-1.5 h-[90px] ${colorClasses} rounded-l-xl rounded-r-none ${activeRing} p-2 flex flex-col justify-between select-none ${cursorClass} transition-all overflow-hidden`;
+                el1.innerHTML = renderSingleVesselBar(v, {
+                    leftOverride: part1Left,
+                    widthOverride: part1Width
+                });
+                rowContainer.appendChild(el1);
+
+                const el2 = document.createElement('div');
+                el2.id = `vessel-${v.id}-wrap`;
+                applyInteraction(el2);
+
+                el2.style.left = `${part2Left}%`;
+                el2.style.width = `${part2Width}%`;
+                el2.className = `absolute top-1.5 h-[90px] ${colorClasses} rounded-r-xl rounded-l-none ${activeRing} p-2 flex flex-col justify-between select-none ${cursorClass} transition-all overflow-hidden`;
+                el2.innerHTML = renderSingleVesselBar(v, {
+                    isWrapSegment: true,
+                    leftOverride: part2Left,
+                    widthOverride: part2Width
+                });
+                rowContainer.appendChild(el2);
+            }
+        }
+
+        function decorateVessel(v) {
+            if (!v.dir) v.dir = 'E';
+            v.isPapca = !!(v.terminal && v.terminal.includes('PAPCA'));
+            v.isDedicated = (v.status === 'Dedicated' || v.isDedicated === true) && !v.isPapca;
+            return v;
+        }
+
+        function isVesselLocked(v) {
+            return !!(v.isConfirmed || v.status === 'Done' || v.isDedicated);
+        }
+
+        function syncAllStatuses() {
+            clearGanttRowsDOM();
+            vessels.forEach(v => {
+                decorateVessel(v);
+                if (v.isDedicated) {
+                    v.status = 'Dedicated';
+                } else if (!v.isConfirmed) {
+                    v.status = calculateDynamicStatus(v);
+                } else {
+                    v.status = 'Done';
+                }
+            });
+            renderMasterGridTable();
+            renderLaneRotationUI();
+            vessels.forEach(v => updateVesselDOM(v));
+            syncRowTerminalSelects();
+        }
+
+        function ensureTerminalOption(termCode) {
+            for (let rowId = 1; rowId <= 3; rowId++) {
+                const select = document.getElementById(`gantt-row-${rowId}-terminal`);
+                if (!select) continue;
+                let exists = false;
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === termCode) { exists = true; break; }
+                }
+                if (!exists) {
+                    const opt = document.createElement('option');
+                    opt.value = termCode;
+                    opt.textContent = termCode;
+                    select.appendChild(opt);
+                }
+            }
+        }
+
+        function populateRowTerminalSelects() {
+            const codes = TERMINAL_OPTIONS.map(t => t.code);
+            for (let rowId = 1; rowId <= 3; rowId++) {
+                const select = document.getElementById(`gantt-row-${rowId}-terminal`);
+                if (!select) continue;
+                select.innerHTML = codes.map(code => `<option value="${code}">${code}</option>`).join('');
+            }
+            syncRowTerminalSelects();
+        }
+
+        function syncRowTerminalSelects() {
+            for (let rowId = 1; rowId <= 3; rowId++) {
+                const select = document.getElementById(`gantt-row-${rowId}-terminal`);
+                if (select && select.value !== rowTerminals[rowId]) {
+                    select.value = rowTerminals[rowId];
+                }
+            }
+        }
+
+        function populateTerminalMultiselect() {
+            const panel = document.getElementById('terminal-ms-panel');
+            if (!panel) return;
+
+            const allChecked = selectedTerminals.length === 0;
+            let html = `
+                <label class="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-neutral-800 hover:bg-neutral-100 cursor-pointer border-b border-neutral-200">
+                    <input type="checkbox" ${allChecked ? 'checked' : ''} onclick="onTerminalAllToggle(event)" class="accent-primary-500 w-3.5 h-3.5">
+                    <span>All Terminals</span>
+                </label>
+            `;
+            html += TERMINAL_OPTIONS.map(t => {
+                const idx = selectedTerminals.indexOf(t.code);
+                const checked = idx !== -1;
+                
+                const badgeClass = t.hasConstraint 
+                    ? 'bg-amber-100 text-amber-900 border-amber-300' 
+                    : 'bg-emerald-100 text-emerald-900 border-emerald-300';
+                const badgeLabel = t.hasConstraint ? 'Cap Limit: Y' : 'Cap Limit: N';
+                const badgeHtml = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-extrabold border ${badgeClass} shrink-0">${badgeLabel}</span>`;
+
+                return `
+                    <label class="flex items-center justify-between gap-2 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-100 cursor-pointer">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <input type="checkbox" ${checked ? 'checked' : ''} onclick="onTerminalOptionToggle(event, '${t.code}')" class="accent-primary-500 w-3.5 h-3.5 shrink-0">
+                            <span class="truncate font-semibold">${t.code}</span>
+                        </div>
+                        ${badgeHtml}
+                    </label>
+                `;
+            }).join('');
+            panel.innerHTML = html;
+        }
+
+        function updateTerminalMultiselectLabel() {
+            const label = document.getElementById('terminal-ms-label');
+            if (!label) return;
+            if (selectedTerminals.length === 0) {
+                label.textContent = 'All Terminals';
+            } else if (selectedTerminals.length === 1) {
+                label.textContent = selectedTerminals[0];
+            } else {
+                label.textContent = `${selectedTerminals[0]} +${selectedTerminals.length - 1}`;
+            }
+        }
+
+        function toggleConstraintTermDropdown(e) {
+            e.stopPropagation();
+            const panel = document.getElementById('constraint-term-panel');
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+        }
+
+        function selectConstraintTermOption(code) {
+            const panel = document.getElementById('constraint-term-panel');
+            if (panel) panel.classList.add('hidden');
+
+            const labelEl = document.getElementById('constraint-term-label');
+            if (labelEl) labelEl.textContent = code;
+
+            switchTerminalView(code, true);
+            updateConstraintTerminalDropdown();
+        }
+
+        function updateConstraintTerminalDropdown() {
+            const labelEl = document.getElementById('constraint-term-label');
+            const badgeEl = document.getElementById('constraint-term-badge');
+            const panelEl = document.getElementById('constraint-term-panel');
+            if (!panelEl) return;
+
+            let availableTerminals = [];
+            if (selectedTerminals.length >= 1) {
+                availableTerminals = [...selectedTerminals];
+            } else {
+                availableTerminals = TERMINAL_OPTIONS.map(t => t.code);
+            }
+
+            let activeCode = labelEl ? labelEl.textContent : availableTerminals[0];
+            if (!availableTerminals.includes(activeCode)) {
+                activeCode = availableTerminals[0];
+            }
+
+            if (labelEl) labelEl.textContent = activeCode;
+
+            if (badgeEl) {
+                badgeEl.innerHTML = '';
+            }
+
+            let html = availableTerminals.map(code => {
+                const data = terminalConstraintData[code];
+                let badgeHtml = '';
+                if (data) {
+                    const badgeClass = data.hasConstraint 
+                        ? 'bg-amber-100 text-amber-900 border-amber-300' 
+                        : 'bg-emerald-100 text-emerald-900 border-emerald-300';
+                    const badgeLabel = data.hasConstraint ? 'Cap Limit: Y' : 'Cap Limit: N';
+                    badgeHtml = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-extrabold border ${badgeClass} shrink-0">${badgeLabel}</span>`;
+                }
+                const isSelected = (code === activeCode);
+                return `
+                    <button type="button" onclick="selectConstraintTermOption('${code}')" class="w-full flex items-center justify-between gap-2 px-3 py-1.5 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 cursor-pointer ${isSelected ? 'bg-secondary-50 font-extrabold text-secondary-900' : ''}">
+                        <span class="font-mono font-bold">${code}</span>
+                        ${badgeHtml}
+                    </button>
+                `;
+            }).join('');
+
+            panelEl.innerHTML = html;
+            renderCapacityBar(activeCode);
+        }
+
+        function toggleTerminalDropdown(e) {
+            e.stopPropagation();
+            const panel = document.getElementById('terminal-ms-panel');
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+        }
+
+        function onTerminalAllToggle(e) {
+            e.stopPropagation();
+            selectedTerminals = [];
+            applyTerminalSelection();
+        }
+
+        function onTerminalOptionToggle(e, code) {
+            e.stopPropagation();
+            const idx = selectedTerminals.indexOf(code);
+            if (idx === -1) {
+                selectedTerminals.push(code);
+            } else {
+                selectedTerminals.splice(idx, 1);
+            }
+            applyTerminalSelection();
+        }
+
+        function applyTerminalSelection() {
+            let primaryTerm = 'KRPUSHN';
+            if (selectedTerminals.length > 0) {
+                primaryTerm = selectedTerminals[0];
+            }
+
+            switchTerminalView(primaryTerm, false);
+
+            populateTerminalMultiselect();
+            updateTerminalMultiselectLabel();
+            updateConstraintTerminalDropdown();
+        }
+
+        function setRowTerminal(rowId, termCode, options = {}) {
+            if (!termCode) return;
+            const { silent = false, syncCapacityBar = true } = options;
+
+            rowTerminals[rowId] = termCode;
+            ensureTerminalOption(termCode);
+
+            const preset = terminalSchedulesPreset[termCode];
+            vessels = vessels.filter(v => v.rowId !== rowId);
+
+            if (preset && preset.length > 0) {
+                const entries = preset.filter(v => v.rowId === rowId);
+                if (entries.length > 0) {
+                    vessels = vessels.concat(JSON.parse(JSON.stringify(entries)));
+                } else {
+                    vessels.push({
+                        id: 'v' + Date.now().toString().slice(-4) + rowId,
+                        lane: ROW_LANE_MAP[rowId],
+                        terminal: termCode,
+                        left: 20,
+                        width: 18,
+                        rowId: rowId,
+                        status: 'Safe',
+                        isConfirmed: false,
+                        isDedicated: false
+                    });
+                }
+            }
+
+            if (syncCapacityBar && LANE_ROW_MAP[currentActiveLane] === rowId) {
+                const labelEl = document.getElementById('constraint-term-label');
+                if (labelEl) labelEl.textContent = termCode;
+                updateConstraintTerminalDropdown();
+            }
+
+            syncAllStatuses();
+
+            if (!silent) {
+                const laneLabel = ROW_LANE_MAP[rowId] || `Row ${rowId}`;
+                showToast(`[${laneLabel}] Row의 Terminal이 [${termCode}]로 변경되었습니다.`);
+            }
+        }
+
+        function getRowIdFromContainerId(id) {
+            const match = /^row-(\d+)-vessels$/.exec(id);
+            return match ? parseInt(match[1], 10) : null;
+        }
+
+        function getHoveredRowId(clientY) {
+            const rowContainers = document.querySelectorAll('[id^="row-"][id$="-vessels"]');
+            let hoveredId = null;
+            rowContainers.forEach(container => {
+                const rect = container.getBoundingClientRect();
+                if (clientY >= rect.top && clientY <= rect.bottom) {
+                    hoveredId = getRowIdFromContainerId(container.id);
+                }
+            });
+            return hoveredId;
+        }
+
+        function highlightDropRow(rowId) {
+            document.querySelectorAll('[id^="row-"][id$="-vessels"]').forEach(container => {
+                const cId = getRowIdFromContainerId(container.id);
+                container.classList.toggle('gantt-row-drop-target', cId === rowId);
+            });
+        }
+
+        function clearDropRowHighlight() {
+            document.querySelectorAll('[id^="row-"][id$="-vessels"]').forEach(container => {
+                container.classList.remove('gantt-row-drop-target');
+            });
+        }
+
+        function startDrag(e, vesselId, type) {
+            e.stopPropagation();
+
+            const target = vessels.find(v => v.id === vesselId);
+            if (!target) return;
+
+            if (target.isDedicated) {
+                showToast('🔒 Dedicated slot reserved by another carrier.');
+                return;
+            }
+
+            if (target.isPapca && (type === 'resize-left' || type === 'resize-right')) {
+                showToast('Panama Canal (PAPCA) transit duration is fixed and cannot be resized.');
+                return;
+            }
+
+            selectVessel(vesselId);
+            activeVessel = target;
+
+            if (isVesselLocked(activeVessel)) {
+                showToast("Confirmed schedule cannot be moved. Uncheck (✓) to edit.");
+                activeVessel = null;
+                return;
+            }
+
+            activeType = type;
+            startClientX = e.clientX;
+            startLeftPercent = activeVessel.left;
+            startWidthPercent = activeVessel.width;
+            dragStartRowId = activeVessel.rowId;
+
+            const rowEl = document.getElementById(`row-${activeVessel.rowId}-vessels`);
+            currentContainerWidth = rowEl ? rowEl.getBoundingClientRect().width : 1000;
+
+            if (type === 'move') {
+                highlightDropRow(activeVessel.rowId);
+            }
+
+            document.addEventListener('mousemove', onDragging);
+            document.addEventListener('mouseup', stopDragging);
+        }
+
+        function onDragging(e) {
+            if (!activeVessel || activeVessel.isDedicated) return;
+            const deltaX = e.clientX - startClientX;
+            const deltaPercent = (deltaX / currentContainerWidth) * 100;
+
+            if (activeType === 'move') {
+                if (activeVessel.isPapca) {
+                    const rawLeftPercent = startLeftPercent + deltaPercent;
+                    const dayWidthPercent = (24 / 168) * 100;
+                    const convoyStartHour = 18;
+                    const hourOffsetPercent = (convoyStartHour / 168) * 100;
+
+                    let dayIndex = Math.round((rawLeftPercent - hourOffsetPercent) / dayWidthPercent);
+                    dayIndex = Math.max(0, Math.min(6, dayIndex));
+
+                    activeVessel.left = hourOffsetPercent + (dayIndex * dayWidthPercent);
+                    activeVessel.rowId = dragStartRowId;
+                    activeVessel.lane = ROW_LANE_MAP[dragStartRowId] || activeVessel.lane;
+                    activeVessel.terminal = rowTerminals[dragStartRowId] || activeVessel.terminal;
+
+                    highlightDropRow(dragStartRowId);
+                } else {
+                    let newLeft = startLeftPercent + deltaPercent;
+                    newLeft = (newLeft % 100 + 100) % 100;
+
+                    const snappedHalfHours = Math.round((newLeft / 100) * 168 * 2);
+                    activeVessel.left = (snappedHalfHours / (168 * 2)) * 100;
+
+                    const hoveredRowId = getHoveredRowId(e.clientY);
+                    if (hoveredRowId && hoveredRowId !== activeVessel.rowId) {
+                        activeVessel.rowId = hoveredRowId;
+                        activeVessel.lane = ROW_LANE_MAP[hoveredRowId] || activeVessel.lane;
+                        activeVessel.terminal = rowTerminals[hoveredRowId] || activeVessel.terminal;
+
+                        const newRowEl = document.getElementById(`row-${hoveredRowId}-vessels`);
+                        if (newRowEl) currentContainerWidth = newRowEl.getBoundingClientRect().width;
+                    }
+                    if (hoveredRowId) highlightDropRow(hoveredRowId);
+                }
+            } else if (activeType === 'resize-left' && !activeVessel.isPapca) {
+                let newLeft = startLeftPercent + deltaPercent;
+                let newWidth = startWidthPercent - deltaPercent;
+                if (newWidth >= 3) {
+                    const snappedLeftHalf = Math.round((newLeft / 100) * 168 * 2);
+                    activeVessel.left = (snappedLeftHalf / (168 * 2)) * 100;
+                    activeVessel.width = startWidthPercent + (startLeftPercent - activeVessel.left);
+                }
+            } else if (activeType === 'resize-right' && !activeVessel.isPapca) {
+                let newWidth = startWidthPercent + deltaPercent;
+                newWidth = Math.max(3, newWidth);
+                const snappedWidthHalf = Math.round((newWidth / 100) * 168 * 2);
+                activeVessel.width = (snappedWidthHalf / (168 * 2)) * 100;
+            }
+
+            syncAllStatuses();
+        }
+
+        function stopDragging() {
+            if (activeVessel && !activeVessel.isDedicated) {
+                const rowChanged = dragStartRowId !== null && dragStartRowId !== activeVessel.rowId;
+                if (rowChanged) {
+                    showToast(`[${activeVessel.lane}] Schedule moved to new row.`);
+                } else {
+                    showToast(`[${activeVessel.lane}] Schedule updated.`);
+                }
+            }
+            clearDropRowHighlight();
+            activeVessel = null;
+            activeType = null;
+            dragStartRowId = null;
+            document.removeEventListener('mousemove', onDragging);
+            document.removeEventListener('mouseup', stopDragging);
+        }
+
+        function selectVessel(id) {
+            const v = vessels.find(item => item.id === id);
+            if (v && v.isDedicated) {
+                showToast('🔒 Dedicated slot reserved by another carrier.');
+                return;
+            }
+
+            selectedVesselId = id;
+            if (v) {
+                if (v.lane) {
+                    currentActiveLane = v.lane;
+                    const laneFilter = document.getElementById('filter-lanes');
+                    if (laneFilter) laneFilter.value = v.lane;
+                }
+
+                if (v.terminal) {
+                    const labelEl = document.getElementById('constraint-term-label');
+                    if (labelEl) labelEl.textContent = v.terminal;
+                    updateConstraintTerminalDropdown();
+                }
+            }
+            syncAllStatuses();
+        }
+
+        function onTradeFilterChange(tradeVal) {
+            const laneSelect = document.getElementById('filter-lanes');
+            if (!laneSelect) return;
+
+            if (tradeVal === 'All') {
+                laneSelect.value = 'All';
+            } else {
+                const matchingLanes = Object.keys(laneProfiles).filter(l => laneProfiles[l].trade === tradeVal);
+                if (matchingLanes.length > 0) {
+                    laneSelect.value = matchingLanes[0];
+                    currentActiveLane = matchingLanes[0];
+                }
+            }
+            applySearchFilter();
+        }
+
+        function onLaneFilterChange(laneVal) {
+            if (laneVal !== 'All') {
+                currentActiveLane = laneVal;
+
+                const tradeSelect = document.getElementById('filter-trade');
+                if (tradeSelect && laneProfiles[laneVal]) {
+                    tradeSelect.value = laneProfiles[laneVal].trade;
+                }
+
+                const rowId = LANE_ROW_MAP[laneVal];
+                if (rowId) {
+                    const termCode = rowTerminals[rowId];
+                    const labelEl = document.getElementById('constraint-term-label');
+                    if (labelEl) labelEl.textContent = termCode;
+                    updateConstraintTerminalDropdown();
+                }
+            }
+            applySearchFilter();
+        }
+
+        function onPortFilterChange(portVal) {
+            applySearchFilter();
+        }
+
+        function handleRowEmptyClick(e, rowId, trade, lane) {
+            if (e.target.closest('[id^="vessel-"]')) return;
+
+            const container = e.currentTarget;
+            const rect = container.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickPercent = (clickX / rect.width) * 100;
+
+            const snappedHalfHours = Math.round((clickPercent / 100) * 168 * 2);
+            let startLeft = (snappedHalfHours / (168 * 2)) * 100;
+            const duration12hWidth = (12 / 168) * 100;
+
+            const newId = 'v' + Date.now().toString().slice(-4);
+            const newVessel = {
+                id: newId,
+                lane: lane,
+                terminal: rowTerminals[rowId],
+                left: startLeft,
+                width: duration12hWidth,
+                rowId: rowId,
+                status: 'Safe',
+                isConfirmed: false,
+                isDedicated: false
+            };
+
+            vessels.push(newVessel);
+            selectedVesselId = newId;
+
+            syncAllStatuses();
+            showToast(`[${lane}] 12-hour simulation slot added.`);
+        }
+
+        function updateLegData(idx, field, rawVal) {
+            const val = parseFloat(rawVal);
+            if (isNaN(val) || val <= 0) return;
+
+            const profile = laneProfiles[currentActiveLane] || laneProfiles['EC1'];
+            const leg = profile.legs[idx];
+            if (!leg) return;
+
+            if (field === 'time') {
+                leg.time = Math.round(val);
+                leg.speed = parseFloat((leg.distance / leg.time).toFixed(1));
+            } else if (field === 'speed') {
+                leg.speed = parseFloat(val.toFixed(1));
+                leg.time = Math.round(leg.distance / leg.speed);
+            }
+
+            const targetVessel = vessels[idx + 1];
+            if (targetVessel && !targetVessel.isDedicated) {
+                const baseTime = (idx === 0) ? 26 : (idx === 1 ? 42 : 102);
+                const deltaHours = leg.time - baseTime;
+                
+                const snappedDeltaHours = Math.round(deltaHours * 2) / 2;
+                const deltaPercent = (snappedDeltaHours / 168) * 100;
+                
+                const baseLeft = (idx === 0) ? 44.0 : 26.0;
+                targetVessel.left = parseFloat(((baseLeft + deltaPercent) % 100 + 100) % 100).toFixed(2);
+            }
+
+            syncAllStatuses();
+            showToast(`Leg #${idx + 1}: Sea Time ${leg.time}h / Speed ${leg.speed}kn updated.`);
+        }
+
+        function showScheduleView() {
+            const scheduleScreen = document.getElementById('screen-schedule');
+            const ganttScreen = document.getElementById('screen-gantt');
+            const brandTitle = document.getElementById('main-brand-title');
+            const backBtn = document.getElementById('header-back-btn');
+
+            if (scheduleScreen) scheduleScreen.classList.remove('hidden');
+            if (ganttScreen) ganttScreen.classList.add('hidden');
+            if (brandTitle) brandTitle.textContent = "Proforma Schedule Overview";
+            
+            if (backBtn) {
+                backBtn.disabled = true;
+                backBtn.className = "ds-btn border border-neutral-300 bg-neutral-100 text-neutral-500 opacity-80 cursor-not-allowed transition-all !py-1 !px-2.5 text-sm font-extrabold rounded-md";
+            }
+        }
+
+        function navigateToGantt(portName, nodeIndex, laneId) {
+            const scheduleScreen = document.getElementById('screen-schedule');
+            const ganttScreen = document.getElementById('screen-gantt');
+            const brandTitle = document.getElementById('main-brand-title');
+            const backBtn = document.getElementById('header-back-btn');
+
+            if (scheduleScreen) scheduleScreen.classList.add('hidden');
+            if (ganttScreen) ganttScreen.classList.remove('hidden');
+            if (brandTitle) brandTitle.textContent = "Berth Window Gantt Timelines";
+
+            if (backBtn) {
+                backBtn.disabled = false;
+                backBtn.className = "ds-btn border border-neutral-300 hover:bg-neutral-100 rounded-md text-neutral-800 opacity-100 cursor-pointer transition-all !py-1 !px-2.5 text-sm font-extrabold";
+            }
+
+            currentActiveLane = laneId;
+            const laneFilter = document.getElementById('filter-lanes');
+            if (laneFilter) laneFilter.value = laneId;
+
+            switchTerminalView(portName, true);
+        }
+
+        function selectTerminalFromRotation(termCode) {
+            switchTerminalView(termCode, true);
+        }
+
+        function renderCapacityBar(termValue) {
+            const bar = document.getElementById('terminal-constraint-bar');
+            const constraintDetails = document.getElementById('constraint-details');
+
+            if (!bar) return;
+
+            const effectiveTerm = (!termValue || termValue === 'All') ? 'KRPUSHN' : termValue;
+            const data = terminalConstraintData[effectiveTerm] || terminalConstraintData['KRPUSHN'];
+
+            bar.classList.remove('hidden');
+
+            const netProdEl = document.getElementById('constraint-net-prod');
+            if (netProdEl) netProdEl.textContent = `${data.netProd} Moves/h`;
+
+            if (constraintDetails) {
+                if (!data.hasConstraint) {
+                    constraintDetails.classList.add('hidden');
+                    constraintDetails.innerHTML = '';
+                } else {
+                    constraintDetails.classList.remove('hidden');
+                    const remaining = data.maxVol - data.currentVol;
+                    const percentage = ((data.currentVol / data.maxVol) * 100).toFixed(1);
+
+                    constraintDetails.innerHTML = `
+                        <span class="text-secondary-300/80 font-bold">|</span>
+                        <span><span class="maritime-tooltip" data-tooltip="[주간 최대 처리 한도] 해당 터미널에서 일주일(168시간) 동안 최대로 처리 가능한 화물 한도 수량">Max Vol.</span>: <strong class="font-bold font-mono text-secondary-900">${data.maxVol.toLocaleString()} Moves</strong></span>
+                        <span class="text-secondary-300/80 font-bold">|</span>
+                        <div class="flex items-center gap-2">
+                            <span class="maritime-tooltip" data-tooltip="[주간 잔여 가용 물량] 주간 수용 한도 중 현재 누적 처리량을 제하고 이번 주에 추가로 선적/하역할 수 있는 여유 한도 수량입니다.">Remaining</span>:
+                            <strong class="font-black font-mono text-primary-600 text-xs">
+                                ${data.currentVol.toLocaleString()} / ${data.maxVol.toLocaleString()} Moves <span class="text-primary-700 font-extrabold maritime-tooltip" data-tooltip="[추가 처리 가능 잔여량] 이번 주 스케줄에 추가 배정 가능한 물동량입니다.">(${remaining.toLocaleString()} Left)</span>
+                            </strong>
+                            <div class="capacity-bar-track ml-1">
+                                <div class="capacity-bar-fill" style="width: ${percentage}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function saveSimulationState() {
+            showToast("Simulation schedule state saved successfully.");
+        }
+
+        function applySearchFilter() {
+            const tradeVal = document.getElementById('filter-trade') ? document.getElementById('filter-trade').value : 'All';
+            const laneVal = document.getElementById('filter-lanes') ? document.getElementById('filter-lanes').value : 'All';
+            const portVal = document.getElementById('filter-ports') ? document.getElementById('filter-ports').value : 'All';
+
+            let termVal = selectedTerminals.length === 0 ? 'All Terminals' : (selectedTerminals.length === 1 ? selectedTerminals[0] : `${selectedTerminals[0]} +${selectedTerminals.length - 1}`);
+
+            syncAllStatuses();
+            showToast(`Filter applied: Trade [${tradeVal}] / Lane [${laneVal}] / Port [${portVal}] / Terminal [${termVal}]`);
+        }
+
+        function showVesselTooltip(e, id) {
+            const v = vessels.find(item => item.id === id);
+            if (!v) return;
+
+            const tooltip = document.getElementById('gantt-vessel-tooltip');
+            if (!tooltip) return;
+
+            const startDT = percentToDayTime(v.left);
+            const endDT = percentToDayTime(v.left + v.width);
+            const stayHours = ((Math.round((v.width * 1.68) * 2)) / 2).toFixed(1);
+
+            let statusColorClass = "text-emerald-400";
+            if (v.status === 'Confirmed' || v.status === 'Done') statusColorClass = "text-blue-400";
+            else if (v.status === 'Clash') statusColorClass = "text-rose-400";
+            else if (v.status === 'Review') statusColorClass = "text-amber-400";
+            else if (v.isDedicated || v.status === 'Dedicated') statusColorClass = "text-neutral-300";
+
+            const dir = v.dir || 'E';
+            const termWithDir = `${(v.terminal || rowTerminals[v.rowId] || '')}:${dir}`;
+            const dedicated = !!v.isDedicated;
+            const isPapca = !!v.isPapca;
+
+            const etbTimeTag = `${startDT.day} ${startDT.time}`;
+            const etdTimeTag = `${endDT.day} ${endDT.time}`;
+
+            let overlapDetailMsg = '';
+            if (!dedicated && v.lastOverlapPercent > 0) {
+                if (v.lastOverlapPercent > 15) {
+                    overlapDetailMsg = `<div class="text-[10px] text-rose-300 font-bold mt-1 bg-rose-950/80 p-1.5 rounded border border-rose-800">⚠️ Severe Overlap (${v.lastOverlapPercent}% of stay): Berth Clash</div>`;
+                } else {
+                    overlapDetailMsg = `<div class="text-[10px] text-amber-300 font-bold mt-1 bg-amber-950/80 p-1.5 rounded border border-amber-800">⚠️ Minor Overlap (${v.lastOverlapPercent}% of stay): Buffer Review</div>`;
+                }
+            } else if (!dedicated && v.width > 24 && v.lastOverlapPercent === 0) {
+                overlapDetailMsg = `<div class="text-[10px] text-amber-300 font-bold mt-1 bg-amber-950/80 p-1.5 rounded border border-amber-800">ℹ️ Long Stay Review (>40h Port Time)</div>`;
+            }
+
+            let tooltipNotice = '';
+            if (dedicated) {
+                tooltipNotice = `
+                    <div class="mt-2 pt-2 border-t border-neutral-700 text-[10px] text-neutral-200 bg-neutral-800/90 p-2 rounded-lg border border-neutral-600 space-y-1">
+                        <div class="font-extrabold text-neutral-100 flex items-center gap-1">
+                            <span>🔒 Dedicated Slot (Other Carrier)</span>
+                        </div>
+                        <div class="leading-relaxed opacity-95">
+                            Reserved slot for another carrier. Selection, position, and stay duration are fully locked.
+                        </div>
+                    </div>
+                `;
+            } else if (isPapca) {
+                tooltipNotice = `
+                    <div class="mt-2 pt-2 border-t border-neutral-700 text-[10px] text-neutral-200 bg-neutral-800/90 p-2 rounded-lg border border-neutral-600 space-y-1">
+                        <div class="font-extrabold text-neutral-100 flex items-center gap-1">
+                            <span>⏱️ PAPCA Transit Slot</span>
+                        </div>
+                        <div class="leading-relaxed opacity-95">
+                            Panama Canal transit duration is fixed. Move day-to-day within the same lane.
+                        </div>
+                    </div>
+                `;
+            }
+
+            const tooltipTitle = dedicated ? termWithDir : `${v.lane} (${termWithDir})`;
+            const statusLabel = dedicated ? '🔒 DEDICATED' : v.status;
+            const statusColor = dedicated ? 'text-neutral-300 font-extrabold' : statusColorClass;
+
+            tooltip.innerHTML = `
+                <div class="font-extrabold text-xs text-white border-b border-neutral-700 pb-1.5 flex justify-between items-center">
+                    <span>${tooltipTitle}</span>
+                    <span class="text-[10px] ${statusColor} font-black uppercase">${statusLabel}</span>
+                </div>
+                <div class="space-y-1 text-[11px] pt-1">
+                    <div><strong>ETB:</strong> <span class="font-mono text-neutral-200">${etbTimeTag}</span></div>
+                    <div><strong>ETD:</strong> <span class="font-mono text-neutral-200">${etdTimeTag}</span></div>
+                    <div><strong>Port Time:</strong> <span class="font-mono ${statusColor} font-bold">${stayHours} Hours</span></div>
+                </div>
+                ${overlapDetailMsg}
+                ${tooltipNotice}
+            `;
+
+            tooltip.classList.remove('hidden');
+            positionSmartTooltip(e, 'gantt-vessel-tooltip');
+        }
+
+        function positionSmartTooltip(e, tooltipId) {
+            const tooltipEl = document.getElementById(tooltipId);
+            if (!tooltipEl || tooltipEl.classList.contains('hidden')) return;
+
+            const padding = 15;
+            const rect = tooltipEl.getBoundingClientRect();
+            const ttWidth = rect.width || 280;
+            const ttHeight = rect.height || 120;
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            let left = e.clientX + padding;
+            let top = e.clientY + padding;
+
+            if (left + ttWidth > vw - 15) {
+                left = e.clientX - ttWidth - padding;
+            }
+            if (left < 10) left = 10;
+
+            if (top + ttHeight > vh - 15) {
+                top = e.clientY - ttHeight - padding;
+            }
+            if (top < 10) top = 10;
+
+            tooltipEl.style.left = `${left}px`;
+            tooltipEl.style.top = `${top}px`;
+        }
+
+        function hideVesselTooltip() {
+            const tooltip = document.getElementById('gantt-vessel-tooltip');
+            if (tooltip) tooltip.classList.add('hidden');
+        }
+
+        function initGlobalTooltipEvents() {
+            const tooltipEl = document.getElementById('global-maritime-tooltip');
+            if (!tooltipEl) return;
+
+            document.addEventListener('mouseover', (e) => {
+                const target = e.target.closest('.maritime-tooltip');
+                if (target) {
+                    if (target.hasAttribute('title')) {
+                        target.removeAttribute('title');
+                    }
+
+                    const text = target.getAttribute('data-tooltip');
+                    if (!text) return;
+                    
+                    tooltipEl.textContent = text;
+                    tooltipEl.classList.remove('hidden');
+                    positionSmartTooltip(e, 'global-maritime-tooltip');
+                    setTimeout(() => tooltipEl.classList.add('opacity-100'), 10);
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!tooltipEl.classList.contains('hidden')) {
+                    positionSmartTooltip(e, 'global-maritime-tooltip');
+                }
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                const target = e.target.closest('.maritime-tooltip');
+                if (target) {
+                    tooltipEl.classList.remove('opacity-100');
+                    tooltipEl.classList.add('hidden');
+                }
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const message = document.getElementById('toast-message');
+            if (!toast || !message) return;
+
+            message.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Export global scope bindings for inline HTML handlers
+        window.showScheduleView = showScheduleView;
+        window.navigateToGantt = navigateToGantt;
+        window.onTradeFilterChange = onTradeFilterChange;
+        window.onLaneFilterChange = onLaneFilterChange;
+        window.onPortFilterChange = onPortFilterChange;
+        window.selectTerminalFromRotation = selectTerminalFromRotation;
+        window.saveSimulationState = saveSimulationState;
+        window.applySearchFilter = applySearchFilter;
+        window.showVesselTooltip = showVesselTooltip;
+        window.positionSmartTooltip = positionSmartTooltip;
+        window.hideVesselTooltip = hideVesselTooltip;
+        window.toggleConfirmVessel = toggleConfirmVessel;
+        window.promptDeleteVessel = promptDeleteVessel;
+        window.closeDeleteModal = closeDeleteModal;
+        window.startDrag = startDrag;
+        window.selectVessel = selectVessel;
+        window.handleRowEmptyClick = handleRowEmptyClick;
+        window.updateLegData = updateLegData;
+        window.setRowTerminal = setRowTerminal;
+        window.toggleTerminalDropdown = toggleTerminalDropdown;
+        window.onTerminalAllToggle = onTerminalAllToggle;
+        window.onTerminalOptionToggle = onTerminalOptionToggle;
+        window.toggleConstraintTermDropdown = toggleConstraintTermDropdown;
+        window.selectConstraintTermOption = selectConstraintTermOption;
+
+        function initApp() {
+            showScheduleView();
+            populateRowTerminalSelects();
+            populateTerminalMultiselect();
+            updateTerminalMultiselectLabel();
+            updateConstraintTerminalDropdown();
+            syncAllStatuses();
+            initGlobalTooltipEvents();
+
+            document.addEventListener('click', (e) => {
+                const panel = document.getElementById('terminal-ms-panel');
+                const btn = document.getElementById('terminal-ms-btn');
+                if (panel && !panel.classList.contains('hidden')) {
+                    if (btn && !btn.contains(e.target) && !panel.contains(e.target)) {
+                        panel.classList.add('hidden');
+                    }
+                }
+
+                const cPanel = document.getElementById('constraint-term-panel');
+                const cBtn = document.getElementById('constraint-term-btn');
+                if (cPanel && !cPanel.classList.contains('hidden')) {
+                    if (cBtn && !cBtn.contains(e.target) && !cPanel.contains(e.target)) {
+                        cPanel.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>
