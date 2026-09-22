@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hotpin 사용 가이드</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+  :root {
+    --pink-1: #ff9282;
+    --pink-2: #ff5890;
+    --pink-3: #cb6ecf;
+    --bg: #f7f7f8;
+    --card-bg: #ffffff;
+    --text-main: #1a1a1a;
+    --text-sub: rgba(0, 0, 0, 0.55);
+    --border: rgba(0, 0, 0, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Pretendard', -apple-system, 'SF Pro Text', 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+  }
+
+  .hero {
+    background: var(--bg);
+    padding: 64px 24px 40px;
+    text-align: center;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #ffffff;
+    font-size: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  .hero h1 {
+    font-size: 34px;
+    font-weight: 800;
+    margin: 0 0 10px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--text-sub);
+    margin: 0;
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 24px auto 80px;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    padding: 36px 40px;
+  }
+
+  .card .kicker {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pink-2);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 18px;
+    letter-spacing: -0.3px;
+  }
+
+  .card p {
+    margin: 0 0 14px;
+    color: var(--text-main);
+    font-size: 15px;
+  }
+
+  .card p.sub {
+    color: var(--text-sub);
+    font-size: 14px;
+  }
+
+  .placeholder {
+    border: 1.5px dashed rgba(0, 0, 0, 0.18);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.02);
+  }
+  .placeholder strong { display: block; color: var(--text-main); font-size: 15px; margin-bottom: 6px; }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin: 20px 0 4px;
+  }
+  .flow-step {
+    background: #fbf7f8;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    position: relative;
+  }
+  .flow-step .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--pink-1) 0%, var(--pink-2) 50%, var(--pink-3) 100%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .flow-step .title { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; }
+  .flow-step .desc { font-size: 12.5px; color: var(--text-sub); }
+
+  table.shortcuts {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  table.shortcuts th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-sub);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.shortcuts td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.shortcuts td:first-child { white-space: nowrap; }
+  .key {
+    display: inline-block;
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-weight: 700;
+    background: #f1eef0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 13px;
+    color: var(--pink-2);
+  }
+
+  .chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .chip-card {
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+  }
+  .chip-card .name { font-weight: 700; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+  .chip-card .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .chip-card .desc { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+
+  .note {
+    background: #fff5f8;
+    border-left: 3px solid var(--pink-2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    color: #6b3a4a;
+    margin-top: 18px;
+  }
+  .note strong { color: var(--pink-2); }
+
+  .compare {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    margin: 22px 0;
+  }
+  .compare-col {
+    flex: 1;
+    border-radius: 12px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+  }
+  .compare-col.before { background: #f7f2f3; }
+  .compare-col.after { background: #fff0f5; border-color: rgba(255, 88, 144, 0.25); }
+  .compare-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
+  }
+  .compare-col.before .compare-label { color: rgba(0, 0, 0, 0.4); }
+  .compare-col.after .compare-label { color: var(--pink-2); }
+  .compare-body { font-size: 13.5px; color: var(--text-main); line-height: 1.55; }
+  .compare-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.25);
+    flex: 0 0 auto;
+  }
+
+  .naming {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+  }
+  .naming-item {
+    border-radius: 12px;
+    padding: 18px 20px;
+    background: #fbf7f8;
+    border: 1px solid var(--border);
+  }
+  .naming-icon { font-size: 20px; margin-bottom: 8px; }
+  .naming-title { font-weight: 800; font-size: 15px; margin-bottom: 6px; }
+  .naming-title span { font-weight: 500; color: var(--text-sub); font-size: 13px; }
+  .naming-desc { font-size: 13px; color: var(--text-sub); line-height: 1.55; }
+
+  footer {
+    text-align: center;
+    padding: 40px 24px 60px;
+    color: var(--text-sub);
+    font-size: 13px;
+  }
+
+  code.inline {
+    background: #f1eef0;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.92em;
+    font-family: 'SF Mono', ui-monospace, monospace;
+  }
+
+  .ico { display: inline-block; vertical-align: middle; }
+  .ico-hero { width: 34px; height: 34px; }
+  .ico-inline { width: 15px; height: 15px; margin: 0 1px; position: relative; top: -1px; }
+
+  .dl-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0 4px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: #fffafc;
+    border: 1px solid rgba(255, 88, 144, 0.22);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .dl-card:hover {
+    border-color: rgba(255, 88, 144, 0.45);
+    box-shadow: 0 6px 18px rgba(255, 88, 144, 0.14);
+  }
+  .dl-card .dl-ico { width: 38px; height: 38px; flex: 0 0 auto; }
+  .dl-card .dl-body { flex: 1 1 auto; min-width: 0; }
+  .dl-card .dl-name {
+    display: block;
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.35;
+    word-break: break-all;
+  }
+  .dl-card .dl-sub {
+    display: block;
+    font-size: 12.5px;
+    color: var(--text-sub);
+    margin-top: 3px;
+  }
+  .dl-card .dl-go {
+    flex: 0 0 auto;
+    background: var(--pink-2);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 11px 20px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .dl-card:hover .dl-go { background: #f5407c; }
+  .card p.dl-note { font-size: 12.5px; color: var(--text-sub); margin: 10px 0 0; }
+
+  @media (max-width: 560px) {
+    .dl-card { flex-wrap: wrap; }
+    .dl-card .dl-go { width: 100%; text-align: center; }
+  }
+
+  figure.shot {
+    margin: 14px 0 4px;
+  }
+  figure.shot > svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  }
+  figure.shot figcaption {
+    font-size: 12.5px;
+    color: var(--text-sub);
+    margin-top: 10px;
+    text-align: center;
+    line-height: 1.55;
+  }
+  .shot-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    margin: 30px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .shot-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--pink-1) 0%, var(--pink-2) 50%, var(--pink-3) 100%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+</style>
+</head>
+<body>
+
+  <!-- 핫핀 아이콘 (icons/icon128.png 내장) — 문서 전체에서 <use href="#hotpin-mark"> 로 참조 -->
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <symbol id="hotpin-mark" viewBox="0 0 128 128">
+      <image href="data:image/png;base64,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" width="128" height="128" />
+    </symbol>
+  </svg>
+
+  <div class="hero">
+    <div class="badge"><svg class="ico ico-hero"><use href="#hotpin-mark" /></svg></div>
+    <h1>Hotpin 사용 가이드</h1>
+    <p>AI로 만든 동적 HTML 와이어프레임에 바로 설명을 남기고, 디자이너·퍼블리셔·개발자가 같은 화면에서 확인하는 크롬 확장 프로그램</p>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 기획 의도 -->
+    <section class="card">
+      <div class="kicker">Why Hotpin</div>
+      <h2>기획 의도</h2>
+      <p>AI로 만든 와이어프레임 위에 기획자의 설명을 그대로 남겨서, 팀원이 <strong>피그마로 옮기거나 캡쳐하지 않고</strong> 같은 화면에서 바로 확인하게 하기 위해 만들었습니다.</p>
+
+      <div class="compare">
+        <div class="compare-col before">
+          <div class="compare-label">기존 방식</div>
+          <div class="compare-body">별도 문서·피그마에 옮겨 적어야 했고, 그 과정에서 위치 정보가 소실되거나 내용이 여러 곳에 흩어짐</div>
+        </div>
+        <div class="compare-arrow">→</div>
+        <div class="compare-col after">
+          <div class="compare-label">Hotpin</div>
+          <div class="compare-body">설명을 "그 자리에 직접" 남겨서, 정보와 화면이 항상 함께 붙어있음</div>
+        </div>
+      </div>
+
+      <div class="naming">
+        <div class="naming-item">
+          <div class="naming-icon">🔥</div>
+          <div class="naming-title">Hot <span>— key</span></div>
+          <div class="naming-desc">마우스 대신 단축키로 대부분의 기능을 처리. AI가 만든 HTML 자체가 이미 완성된 화면처럼 보여서, 클릭형 버튼을 넣으면 "서비스 기능인지 Hotpin 기능인지" 헷갈리기 때문이에요.</div>
+        </div>
+        <div class="naming-item">
+          <div class="naming-icon">📍</div>
+          <div class="naming-title">Pin <span>— description</span></div>
+          <div class="naming-desc">원하는 지점에 핀을 꽂듯 설명을 남겨요. 번호 뱃지로 표시되고, 그 요소에 계속 고정돼요.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 설치 방법 -->
+    <section class="card">
+      <div class="kicker">Installation</div>
+      <h2>설치 방법</h2>
+      <p class="sub">크롬 웹스토어에 등록된 확장이 아니라, 폴더를 직접 불러오는 방식입니다. 설치에 3분이면 충분합니다. <strong style="color:var(--text-main)">크롬(또는 엣지·웨일 등 크로미움 계열 브라우저)</strong>에서 진행해주세요.</p>
+
+      <a class="dl-card" href="https://drive.google.com/drive/folders/1hxQR1Rl9TPtUz_JQ_uWUxjKIBJxfuLoi?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <svg class="ico dl-ico"><use href="#hotpin-mark" /></svg>
+        <span class="dl-body">
+          <span class="dl-name">hotpin-extension-v0.1.0.zip</span>
+          <span class="dl-sub">Google Drive · 약 90KB</span>
+        </span>
+        <span class="dl-go">다운로드</span>
+      </a>
+      <p class="dl-note">Drive에 버전 번호가 더 높은 파일이 있으면 그걸 받으세요.</p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="num">1</div>
+          <div class="title">파일 받기</div>
+          <div class="desc">위 버튼으로 Drive에 접속해 <code class="inline">hotpin-extension-v0.1.0.zip</code>을 다운로드합니다.</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">2</div>
+          <div class="title">압축 풀고 자리 잡기</div>
+          <div class="desc">압축을 해제한 뒤 폴더를 <strong style="color:var(--text-main)">계속 둘 위치</strong>로 옮깁니다. (예: 문서 폴더)</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">3</div>
+          <div class="title">개발자 모드 켜기</div>
+          <div class="desc">주소창에 <code class="inline">chrome://extensions</code> 입력 → 우측 상단 <strong style="color:var(--text-main)">개발자 모드</strong> 스위치 ON</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">4</div>
+          <div class="title">폴더 불러오기</div>
+          <div class="desc">좌측 상단 <strong style="color:var(--text-main)">압축해제된 확장 프로그램을 로드</strong> 클릭 → 2번에서 옮긴 <code class="inline">hotpin-extension</code> 폴더 선택</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">5</div>
+          <div class="title">설치 확인</div>
+          <div class="desc">목록에 <strong style="color:var(--text-main)">핫핀 (Hotpin)</strong> 카드가 생기고 툴바에 <svg class="ico ico-inline"><use href="#hotpin-mark" /></svg> 아이콘이 보이면 완료입니다.</div>
+        </div>
+        <div class="flow-step" style="background:#fff5f8; border-color:rgba(255,88,144,0.3);">
+          <div class="num">6</div>
+          <div class="title">파일 접근 허용 <span style="color:var(--pink-2); font-weight:800;">(필수)</span></div>
+          <div class="desc">핫핀 카드의 <strong style="color:var(--text-main)">세부정보</strong> → <strong style="color:var(--text-main)">파일 URL에 대한 액세스 허용</strong> 스위치를 켭니다. 이걸 켜지 않으면 내 컴퓨터에 있는 HTML 파일에서 핫핀이 동작하지 않습니다.</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">7</div>
+          <div class="title">동작 테스트</div>
+          <div class="desc">와이어프레임 HTML을 열고 <span class="key">/ K</span>를 눌러 단축키 팝업이 뜨면 정상 동작합니다.</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>6단계를 건너뛰지 마세요.</strong> 설치는 끝났는데 단축키가 전혀 안 먹는다면 거의 항상 이 스위치가 꺼져 있는 경우입니다. 크롬은 보안상 내 컴퓨터에 있는 파일(<code class="inline">file://</code>로 열리는 HTML)에는 확장 프로그램을 기본적으로 적용하지 않기 때문에, 설치와 별개로 한 번 직접 허용해줘야 합니다.
+      </div>
+
+      <h2 style="margin-top:34px;">화면으로 보기</h2>
+      <p class="sub">3~6단계가 처음이면 낯설 수 있어서, 실제 화면 구성을 그림으로 옮겼습니다. 크롬 버전에 따라 문구나 위치가 조금 다를 수 있습니다.</p>
+
+      <p class="shot-title"><span class="num">3</span> 개발자 모드 켜기</p>
+      <figure class="shot">
+        <svg viewBox="0 0 720 252" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="크롬 확장 프로그램 페이지 우측 상단의 개발자 모드 토글을 켜는 화면">
+          <rect x="0" y="0" width="720" height="252" fill="#ffffff" />
+          <!-- 브라우저 상단바 -->
+          <rect x="0" y="0" width="720" height="44" fill="#f0f0f2" />
+          <line x1="0" y1="44" x2="720" y2="44" stroke="#e2e2e5" stroke-width="1" />
+          <circle cx="20" cy="22" r="5" fill="#ff5f57" />
+          <circle cx="38" cy="22" r="5" fill="#febc2e" />
+          <circle cx="56" cy="22" r="5" fill="#28c840" />
+          <rect x="80" y="11" width="300" height="22" rx="11" fill="#ffffff" stroke="#e2e2e5" />
+          <text x="93" y="26" font-family="'SF Mono', ui-monospace, monospace" font-size="11.5" fill="#555555">chrome://extensions</text>
+          <!-- 페이지 헤더 -->
+          <text x="28" y="84" font-family="Pretendard, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a">확장 프로그램</text>
+          <!-- 개발자 모드 토글 -->
+          <rect x="558" y="58" width="144" height="46" rx="10" fill="none" stroke="var(--pink-2)" stroke-width="1.5" stroke-dasharray="5 4" />
+          <text x="630" y="85" text-anchor="end" font-family="Pretendard, sans-serif" font-size="13" fill="#333333">개발자 모드</text>
+          <rect x="642" y="70" width="44" height="22" rx="11" fill="#1a73e8" />
+          <circle cx="675" cy="81" r="8" fill="#ffffff" />
+          <circle cx="540" cy="81" r="13" fill="var(--pink-2)" />
+          <text x="540" y="86" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" font-weight="700" fill="#ffffff">3</text>
+          <!-- 아래 확장 목록 (분위기용) -->
+          <rect x="28" y="124" width="320" height="104" rx="10" fill="#fdfdfd" stroke="#ededf0" />
+          <rect x="48" y="144" width="32" height="32" rx="8" fill="#eeeef1" />
+          <rect x="92" y="150" width="120" height="9" rx="4.5" fill="#e4e4e8" />
+          <rect x="92" y="166" width="66" height="8" rx="4" fill="#eeeef1" />
+          <rect x="48" y="196" width="188" height="8" rx="4" fill="#f1f1f4" />
+          <rect x="372" y="124" width="320" height="104" rx="10" fill="#fdfdfd" stroke="#ededf0" />
+          <rect x="392" y="144" width="32" height="32" rx="8" fill="#eeeef1" />
+          <rect x="436" y="150" width="104" height="9" rx="4.5" fill="#e4e4e8" />
+          <rect x="436" y="166" width="72" height="8" rx="4" fill="#eeeef1" />
+          <rect x="392" y="196" width="170" height="8" rx="4" fill="#f1f1f4" />
+        </svg>
+        <figcaption>주소창에 <code class="inline">chrome://extensions</code>를 입력하고, 우측 상단 <strong>개발자 모드</strong> 스위치를 켭니다.</figcaption>
+      </figure>
+
+      <p class="shot-title"><span class="num">4</span> 폴더 불러오기</p>
+      <figure class="shot">
+        <svg viewBox="0 0 720 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="개발자 모드를 켜면 나타나는 압축해제된 확장 프로그램을 로드 버튼과 선택해야 할 폴더 구조">
+          <rect x="0" y="0" width="720" height="256" fill="#ffffff" />
+          <!-- 브라우저 상단바 -->
+          <rect x="0" y="0" width="720" height="44" fill="#f0f0f2" />
+          <line x1="0" y1="44" x2="720" y2="44" stroke="#e2e2e5" stroke-width="1" />
+          <circle cx="20" cy="22" r="5" fill="#ff5f57" />
+          <circle cx="38" cy="22" r="5" fill="#febc2e" />
+          <circle cx="56" cy="22" r="5" fill="#28c840" />
+          <rect x="80" y="11" width="300" height="22" rx="11" fill="#ffffff" stroke="#e2e2e5" />
+          <text x="93" y="26" font-family="'SF Mono', ui-monospace, monospace" font-size="11.5" fill="#555555">chrome://extensions</text>
+          <!-- 페이지 헤더 + 이미 켜진 토글 -->
+          <text x="28" y="80" font-family="Pretendard, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a">확장 프로그램</text>
+          <text x="630" y="81" text-anchor="end" font-family="Pretendard, sans-serif" font-size="12" fill="#999999">개발자 모드</text>
+          <rect x="642" y="68" width="38" height="19" rx="9.5" fill="#1a73e8" opacity="0.5" />
+          <circle cx="670" cy="77.5" r="6.5" fill="#ffffff" />
+          <!-- 버튼 줄 -->
+          <rect x="56" y="104" width="636" height="54" rx="12" fill="#ffffff" stroke="#e6e6e9" />
+          <rect x="72" y="118" width="196" height="27" rx="13.5" fill="#fff5f8" stroke="var(--pink-2)" stroke-width="1.5" />
+          <text x="170" y="136" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5" font-weight="700" fill="var(--pink-2)">압축해제된 확장 프로그램을 로드</text>
+          <rect x="282" y="118" width="124" height="27" rx="13.5" fill="#ffffff" stroke="#dcdce0" />
+          <text x="344" y="136" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5" fill="#666666">확장 프로그램 압축</text>
+          <rect x="420" y="118" width="84" height="27" rx="13.5" fill="#ffffff" stroke="#dcdce0" />
+          <text x="462" y="136" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11.5" fill="#666666">업데이트</text>
+          <circle cx="34" cy="131" r="13" fill="var(--pink-2)" />
+          <text x="34" y="136" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" font-weight="700" fill="#ffffff">4</text>
+          <!-- 폴더 선택 -->
+          <rect x="56" y="180" width="636" height="58" rx="10" fill="#fbfbfc" stroke="#e6e6e9" />
+          <path d="M76 200 h13 l4 5 h17 a3 3 0 0 1 3 3 v15 a3 3 0 0 1 -3 3 h-34 a3 3 0 0 1 -3 -3 v-20 a3 3 0 0 1 3 -3 z" fill="#ffd28a" stroke="#e9ac4c" stroke-width="1" />
+          <text x="126" y="204" font-family="Pretendard, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a">hotpin-extension</text>
+          <text x="126" y="222" font-family="'SF Mono', ui-monospace, monospace" font-size="10.5" fill="#8a8a90">manifest.json · icons · popup · src · GUIDE.html</text>
+          <text x="672" y="213" text-anchor="end" font-family="Pretendard, sans-serif" font-size="11.5" font-weight="700" fill="var(--pink-2)">← 이 폴더를 선택</text>
+        </svg>
+        <figcaption>좌측 상단 <strong>압축해제된 확장 프로그램을 로드</strong>를 누른 뒤, 압축을 푼 폴더를 선택합니다. 선택할 폴더 안에 <code class="inline">manifest.json</code>이 바로 보여야 합니다.</figcaption>
+      </figure>
+
+      <p class="shot-title"><span class="num">5</span> 설치 확인</p>
+      <figure class="shot">
+        <svg viewBox="0 0 720 236" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="설치가 완료되어 핫핀 카드가 목록에 추가되고 툴바에 핀 아이콘이 표시된 화면">
+          <rect x="0" y="0" width="720" height="236" fill="#ffffff" />
+          <!-- 브라우저 상단바 + 툴바 아이콘 -->
+          <rect x="0" y="0" width="720" height="44" fill="#f0f0f2" />
+          <line x1="0" y1="44" x2="720" y2="44" stroke="#e2e2e5" stroke-width="1" />
+          <circle cx="20" cy="22" r="5" fill="#ff5f57" />
+          <circle cx="38" cy="22" r="5" fill="#febc2e" />
+          <circle cx="56" cy="22" r="5" fill="#28c840" />
+          <rect x="80" y="11" width="240" height="22" rx="11" fill="#ffffff" stroke="#e2e2e5" />
+          <text x="93" y="26" font-family="'SF Mono', ui-monospace, monospace" font-size="11.5" fill="#555555">chrome://extensions</text>
+          <rect x="655" y="10" width="24" height="24" rx="7" fill="#ffffff" stroke="var(--pink-2)" stroke-width="1.5" />
+          <use href="#hotpin-mark" x="659" y="14" width="16" height="16" />
+          <text x="641" y="26" text-anchor="end" font-family="Pretendard, sans-serif" font-size="11" font-weight="700" fill="var(--pink-2)">툴바에 아이콘 →</text>
+          <!-- 핫핀 카드 -->
+          <rect x="28" y="72" width="400" height="140" rx="12" fill="#ffffff" stroke="#e6e6e9" />
+          <rect x="48" y="92" width="42" height="42" rx="10" fill="#fff5f8" stroke="rgba(255,88,144,0.3)" />
+          <use href="#hotpin-mark" x="56" y="100" width="26" height="26" />
+          <text x="104" y="110" font-family="Pretendard, sans-serif" font-size="14.5" font-weight="800" fill="#1a1a1a">핫핀 (Hotpin)</text>
+          <text x="104" y="128" font-family="Pretendard, sans-serif" font-size="11.5" fill="#8a8a90">0.1.0</text>
+          <text x="48" y="156" font-family="Pretendard, sans-serif" font-size="11.5" fill="#666666">AI로 만든 동적 와이어프레임에 디스크립션을 바로 남기고</text>
+          <text x="48" y="172" font-family="Pretendard, sans-serif" font-size="11.5" fill="#666666">공유하는 도구</text>
+          <text x="48" y="196" font-family="Pretendard, sans-serif" font-size="11.5" fill="#1a73e8">세부정보</text>
+          <text x="108" y="196" font-family="Pretendard, sans-serif" font-size="11.5" fill="#1a73e8">삭제</text>
+          <circle cx="348" cy="190" r="12" fill="#ffffff" stroke="#dcdce0" />
+          <text x="348" y="195" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" fill="#666666">↻</text>
+          <rect x="372" y="180" width="40" height="20" rx="10" fill="#1a73e8" />
+          <circle cx="402" cy="190" r="7" fill="#ffffff" />
+          <circle cx="24" cy="80" r="13" fill="var(--pink-2)" />
+          <text x="24" y="85" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" font-weight="700" fill="#ffffff">5</text>
+          <!-- 체크리스트 -->
+          <rect x="452" y="72" width="240" height="140" rx="12" fill="#fbf7f8" stroke="#ededf0" />
+          <text x="472" y="102" font-family="Pretendard, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a">이렇게 보이면 완료</text>
+          <text x="472" y="130" font-family="Pretendard, sans-serif" font-size="12" fill="#555555">✓ 목록에 핫핀 카드가 생김</text>
+          <text x="472" y="152" font-family="Pretendard, sans-serif" font-size="12" fill="#555555">✓ 툴바에</text>
+          <use href="#hotpin-mark" x="526" y="141" width="14" height="14" />
+          <text x="545" y="152" font-family="Pretendard, sans-serif" font-size="12" fill="#555555">아이콘이 보임</text>
+          <text x="472" y="174" font-family="Pretendard, sans-serif" font-size="12" fill="#555555">✓ 와이어프레임에서 / K 가 동작</text>
+          <text x="472" y="196" font-family="Pretendard, sans-serif" font-size="11" fill="#9a8a90">↻ 는 코드 수정 후 새로고침용</text>
+        </svg>
+        <figcaption>목록에 <strong>핫핀 (Hotpin)</strong> 카드가 생기고 툴바에 <svg class="ico ico-inline"><use href="#hotpin-mark" /></svg> 아이콘이 보이면 설치가 끝났습니다.</figcaption>
+      </figure>
+
+      <p class="shot-title"><span class="num">6</span> 파일 접근 허용 (필수)</p>
+      <figure class="shot">
+        <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="핫핀 세부정보 페이지에서 파일 URL에 대한 액세스 허용 스위치를 켜는 화면">
+          <rect x="0" y="0" width="720" height="240" fill="#ffffff" />
+          <!-- 브라우저 상단바 -->
+          <rect x="0" y="0" width="720" height="44" fill="#f0f0f2" />
+          <line x1="0" y1="44" x2="720" y2="44" stroke="#e2e2e5" stroke-width="1" />
+          <circle cx="20" cy="22" r="5" fill="#ff5f57" />
+          <circle cx="38" cy="22" r="5" fill="#febc2e" />
+          <circle cx="56" cy="22" r="5" fill="#28c840" />
+          <rect x="80" y="11" width="320" height="22" rx="11" fill="#ffffff" stroke="#e2e2e5" />
+          <text x="93" y="26" font-family="'SF Mono', ui-monospace, monospace" font-size="11.5" fill="#555555">chrome://extensions/?id=…</text>
+          <!-- 페이지 헤더 -->
+          <text x="28" y="86" font-family="Pretendard, sans-serif" font-size="16" fill="#666666">←</text>
+          <use href="#hotpin-mark" x="50" y="68" width="22" height="22" />
+          <text x="82" y="85" font-family="Pretendard, sans-serif" font-size="15" font-weight="700" fill="#1a1a1a">핫핀 (Hotpin)</text>
+          <!-- 권한 카드 -->
+          <rect x="56" y="110" width="636" height="110" rx="12" fill="#ffffff" stroke="#e6e6e9" />
+          <rect x="68" y="120" width="608" height="44" rx="10" fill="#fff5f8" stroke="var(--pink-2)" stroke-width="1.5" stroke-dasharray="5 4" />
+          <text x="88" y="147" font-family="Pretendard, sans-serif" font-size="13" font-weight="700" fill="#1a1a1a">파일 URL에 대한 액세스 허용</text>
+          <rect x="616" y="131" width="44" height="22" rx="11" fill="#1a73e8" />
+          <circle cx="649" cy="142" r="8" fill="#ffffff" />
+          <circle cx="34" cy="142" r="13" fill="var(--pink-2)" />
+          <text x="34" y="147" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" font-weight="700" fill="#ffffff">6</text>
+          <line x1="68" y1="176" x2="676" y2="176" stroke="#ededf0" stroke-width="1" />
+          <text x="88" y="202" font-family="Pretendard, sans-serif" font-size="13" fill="#9a9aa0">시크릿 모드에서 허용</text>
+          <rect x="616" y="191" width="44" height="22" rx="11" fill="#dcdce0" />
+          <circle cx="627" cy="202" r="8" fill="#ffffff" />
+        </svg>
+        <figcaption>5단계 화면의 <strong>세부정보</strong>를 누르면 이 화면이 나옵니다. 위 스위치만 켜고 닫으면 됩니다. (아래 "시크릿 모드" 쪽은 건드리지 않아도 됩니다)</figcaption>
+      </figure>
+
+      <h2 style="margin-top:34px;">설치 전 꼭 알아두기</h2>
+      <p class="sub">• <strong style="color:var(--text-main)">폴더를 지우거나 옮기면 확장이 멈춥니다</strong> — 크롬은 그 폴더를 계속 참조합니다. 다운로드 폴더에 임시로 두지 말고, 처음부터 고정 위치에 두세요.</p>
+      <p class="sub">• <strong style="color:var(--text-main)">폴더를 선택할 때 한 겹 더 들어가 있지 않은지 확인</strong> — 선택한 폴더 안에 <code class="inline">manifest.json</code>이 바로 보여야 합니다. 압축 해제 방식에 따라 같은 이름의 폴더가 두 번 겹칠 수 있는데, 그때는 안쪽 폴더를 선택하세요.</p>
+      <p class="sub">• <strong style="color:var(--text-main)">자동 업데이트가 되지 않습니다</strong> — 새 버전이 공유되면 파일을 다시 받아 기존 폴더에 덮어쓰고, <code class="inline">chrome://extensions</code>에서 핫핀 카드의 새로고침(↻) 버튼을 눌러주세요. 지금 쓰는 버전은 같은 화면의 핫핀 카드에 표시되니, Drive의 파일명과 비교해보면 됩니다.</p>
+      <p class="sub">• <strong style="color:var(--text-main)">확장 프로그램 없이 열람만 하려면 설치가 필요 없습니다</strong> — 저장된 파일에는 조회 전용 뷰어가 함께 들어있습니다. 직접 핀을 작성·수정할 사람만 설치하면 됩니다.</p>
+      <p class="sub">• <strong style="color:var(--text-main)">다른 사이트에서 <code class="inline">/</code> 검색 단축키가 안 먹습니다</strong> — 핫핀이 <code class="inline">/</code>를 기능 키로 쓰기 때문에, 설치 후에는 GitHub·YouTube·Notion 등에서 <code class="inline">/</code>로 검색창을 띄우는 동작이 막힙니다. 버그가 아니라 알려진 동작이고, 핫핀을 쓰지 않는 동안에는 툴바의 핫핀 아이콘을 눌러 <strong style="color:var(--text-main)">끄기</strong>로 돌려두고 페이지를 새로고침하면 원래대로 돌아옵니다.</p>
+
+      <div class="note">
+        <strong>참고.</strong> 크롬을 재시작할 때마다 <em>"개발자 모드 확장 프로그램을 사용 중지하세요"</em> 경고창이 뜰 수 있습니다. 웹스토어를 거치지 않은 확장에 대한 안내일 뿐이니 닫으셔도 동작에 영향은 없습니다. 만약 회사 정책으로 관리되는 브라우저에서 개발자 모드가 아예 꺼져 있거나 로드가 차단된다면, 설치가 불가능한 환경이니 문의 주세요.
+      </div>
+    </section>
+
+    <!-- 사용 방법 -->
+    <section class="card">
+      <div class="kicker">How to use</div>
+      <h2>사용 방법</h2>
+      <p class="sub">확장 프로그램 설치 후, 와이어프레임 HTML 파일을 열면 아래 흐름으로 사용합니다.</p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="num">1</div>
+          <div class="title">자동 인식</div>
+          <div class="desc">파일을 처음 열면 마커가 자동으로 심어져 "직접 만든 와이어프레임"으로 인식됩니다.</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">2</div>
+          <div class="title">조회 모드</div>
+          <div class="desc"><span class="key">/ H</span>로 저장된 디스크립션 뱃지를 보이거나 숨깁니다.</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">3</div>
+          <div class="title">편집 모드 진입</div>
+          <div class="desc"><span class="key">/ A</span> → 어드민 비밀번호 입력 (세션 동안 재입력 불필요)</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">4</div>
+          <div class="title">핀 찍기</div>
+          <div class="desc">화면의 원하는 요소를 클릭 → 수정 타입 선택 → 타이틀·본문 작성</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">5</div>
+          <div class="title">저장</div>
+          <div class="desc"><span class="key">/ L</span>로 로컬 파일에 저장(같은 파일에 자동 덮어쓰기)</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">6</div>
+          <div class="title">팀 공유</div>
+          <div class="desc">저장된 파일을 GitHub 등에 올리면, 팀원이 그 링크를 열 때 최신 내용이 자동으로 채워집니다.</div>
+        </div>
+      </div>
+
+      <h2 style="margin-top:32px;">단축키</h2>
+      <table class="shortcuts">
+        <tr><th>단축키</th><th>동작</th></tr>
+        <tr><td><span class="key">/ H</span></td><td>디스크립션 넘버링 뱃지 보기/숨기기</td></tr>
+        <tr><td><span class="key">/ A</span></td><td>어드민 비밀번호 입력 → 편집 모드 진입</td></tr>
+        <tr><td><span class="key">/ B</span></td><td>편집 모드 → 조회 모드로 복귀</td></tr>
+        <tr><td><span class="key">/ L</span></td><td>현재 와이어프레임을 로컬 파일로 저장(덮어쓰기)</td></tr>
+        <tr><td><span class="key">/ K</span></td><td>단축키 목록 팝업 보기</td></tr>
+      </table>
+      <p class="sub" style="margin-top:10px;"><code class="inline">/</code>를 누르면 약 1.5초 동안 다음 키 입력을 기다립니다. 그 안에 h/a/b/l/k가 아닌 다른 키를 누르면 취소됩니다.</p>
+
+      <h2 style="margin-top:32px;">수정 타입 (8종)</h2>
+      <p class="sub">디스크립션마다 성격에 맞는 색상 칩을 하나 선택합니다.</p>
+      <div class="chip-grid">
+        <div class="chip-card" style="background:#FFEBEC;"><div class="name"><span class="dot" style="background:#FF383C;"></span>Issue</div><div class="desc">버그·오류 발견</div></div>
+        <div class="chip-card" style="background:#FFF1E4;"><div class="name"><span class="dot" style="background:#FF8D28;"></span>Content</div><div class="desc">문구·데이터 수정</div></div>
+        <div class="chip-card" style="background:#E3F2FF;"><div class="name"><span class="dot" style="background:#0088FF;"></span>Policy</div><div class="desc">정책·기준 확인 필요</div></div>
+        <div class="chip-card" style="background:#E9F9EC;"><div class="name"><span class="dot" style="background:#34C759;"></span>Idea</div><div class="desc">개선 아이디어 제안</div></div>
+        <div class="chip-card" style="background:#ECEBFE;"><div class="name"><span class="dot" style="background:#6155F5;"></span>Interaction</div><div class="desc">동작·흐름 수정</div></div>
+        <div class="chip-card" style="background:#FFE9EE;"><div class="name"><span class="dot" style="background:#FF2D55;"></span>Note</div><div class="desc">참고용 메모</div></div>
+        <div class="chip-card" style="background:#F8E7FC;"><div class="name"><span class="dot" style="background:#CB30E0;"></span>Feedback</div><div class="desc">의견·피드백 요청</div></div>
+        <div class="chip-card" style="background:#F1EAE4;"><div class="name"><span class="dot" style="background:#AC7F5E;"></span>Exception Case</div><div class="desc">특수 케이스 처리</div></div>
+      </div>
+
+      <h2 style="margin-top:32px;">알아두면 좋은 점</h2>
+      <p class="sub">• <strong style="color:var(--text-main)">공통 핀</strong> — 헤더처럼 모든 화면에 공통으로 뜨는 요소는 작성 시 "공통" 옵션을 켜면, 화면이 바뀌어도 항상 노출되고 번호도 공통1, 공통2…로 별도 관리됩니다.</p>
+      <p class="sub">• <strong style="color:var(--text-main)">요소를 계속 따라가는 핀</strong> — 정렬/필터가 바뀌거나 요소가 드래그로 다시 그려져도, 그 요소 고유의 식별자를 기준으로 핀이 계속 따라갑니다.</p>
+      <p class="sub">• <strong style="color:var(--text-main)">확장 프로그램 없이도 열람 가능</strong> — <span class="key">/ L</span>로 저장하면 조회 전용 뷰어 코드가 파일 안에 함께 구워집니다. Hotpin이 설치되지 않은 팀원도 파일을 열기만 하면 뱃지를 클릭해 내용을 볼 수 있습니다(열람만 가능, 수정 불가).</p>
+
+      <div class="note">
+        <strong>Tip.</strong> 처음 <span class="key">/ L</span>을 실행하면 저장 위치를 한 번 선택해야 하고, 이후로는 같은 파일에 자동으로 덮어씁니다. 저장하지 않고 새로고침하면 그 사이 작성한 핀이 화면에서 사라질 수 있으니, 작업 중간중간 저장해주세요.
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    Hotpin · 문의: Yerim Yang
+  </footer>
+
+</body>
+</html>
